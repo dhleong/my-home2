@@ -39,6 +39,7 @@ PsModule.prototype.connect = function() {
                     rinfo.address, err);
                 deferred.reject(err);
             }).on('disconnected', function() {
+                console.log("Lost connection");
                 self.socket = null;
                 self.emit('disconnected', self);
             });
@@ -63,14 +64,21 @@ PsModule.prototype.start = function(titleId) {
 }
 
 PsModule.prototype.turnOff = function() {
-    if (!this.socket) {
-        return;
+
+    var self = this;
+    var doRequestStandby = function() {
+        self.socket.requestStandby(function(err) {
+            console.log("Requested standby:", err);
+            self.socket = null;
+        });
     }
 
-    this.socket.requestStandby(function(err) {
-        console.log("Requested standby:", err);
-    });
-    this.socket = null;
+    if (this.socket) {
+        doRequestStandby();
+    } else {
+        this.connect().then(doRequestStandby);
+    }
+
 }
 
 
