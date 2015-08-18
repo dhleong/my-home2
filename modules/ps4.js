@@ -80,9 +80,9 @@ PsModule.prototype.turnOn = function() {
         return Q(this);
     }
 
+    var self = this;
     return Q.Promise(function(resolve, reject) {
-        var self = this;
-        this.waker.wake(WAKE_TIMEOUT, function(err) {
+        self.waker.wake(WAKE_TIMEOUT, function(err) {
             if (err) return reject(err);
 
             self.connect()

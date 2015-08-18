@@ -24,7 +24,9 @@ var devices = {
             insomniac.allowSleep();
         })
         .on('on', function() {
-            ps4.turnOn();
+            ps4.turnOn().fail(function(err) {
+                console.warn("UNABLE to turn ON PS4", err);
+            });
             console.log("Turn ON PS4");
             insomniac.stayAwake();
         })
