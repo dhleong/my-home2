@@ -102,6 +102,11 @@ exapp.intent("MediaIntent", function(req, res) {
         res.tell("Okay");
         break;
 
+    case 'end':
+    case 'done':
+        res.tell("Done!");
+        break;
+
     default:
         res.tell("I don't know how to " + method);
     }
