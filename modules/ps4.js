@@ -67,6 +67,7 @@ PsModule.prototype.turnOff = function() {
 
     var self = this;
     var doRequestStandby = function() {
+        console.log("Requesting standby...");
         self.socket.requestStandby(function(err) {
             console.log("Requested standby:", err);
             self.socket = null;
@@ -76,6 +77,7 @@ PsModule.prototype.turnOff = function() {
     if (this.socket) {
         doRequestStandby();
     } else {
+        console.log("No socket; connecting before requesting standby");
         this.connect().then(doRequestStandby);
     }
 
