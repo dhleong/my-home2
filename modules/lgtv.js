@@ -44,15 +44,21 @@ LgTvModule.prototype.commands = {
     power: function() {
         this.server.command(Commands.POWER_OFF);
     }
-  , click: function() {
-        this.server.command(Commands.ENTER);
-    }
   , back: function() {
         this.server.command(Commands.BACK);
+    }
+  , click: function() {
+        this.server.command(Commands.ENTER);
     }
   , navigate: function(parts) {
         console.log(parts);
     }
-}
+};
+
+['left', 'up', 'right', 'down'].forEach(function(dir) {
+    LgTvModule.prototype.commands[dir] = function() {
+        this.server.command(Commands.Arrow[dir.toUpperCase()]);
+    };
+});
 
 module.exports = LgTvModule;
