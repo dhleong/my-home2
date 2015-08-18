@@ -85,7 +85,12 @@ exapp.intent("MediaIntent", function(req, res) {
     case 'click':
         // see above
         lgtv.handleInput(['click']);
-        res.ask("Okay?");
+
+        if (method == 'click') {
+            res.ask("Okay?");
+        } else {
+            res.tell("Okay");
+        }
         break;
 
     case 'right':
