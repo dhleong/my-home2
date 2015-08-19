@@ -122,11 +122,13 @@ exapp.intent("MediaIntent", function(req, res) {
 });
 
 exapp.intent("SelectPlaystationIntent", function(req, res) {
+    if (!lgtv) lgtv = new TvModule();
     lgtv.switchToPs4();
     res.ask("Okay?");
 });
 
 exapp.intent("SelectWiiIntent", function(req, res) {
+    if (!lgtv) lgtv = new TvModule();
     lgtv.switchToWii();
     res.tell("Okay");
 });
