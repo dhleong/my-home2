@@ -61,4 +61,19 @@ LgTvModule.prototype.commands = {
     };
 });
 
+LgTvModule.prototype.switchToWii() {
+    this.server.command(Commands.INPUTS)
+               .command(Commands.Arrow.RIGHT)
+               .command(Commands.Arrow.RIGHT)
+               .command(Commands.ENTER);
+}
+
+LgTvModule.prototype.switchToPs4() {
+    this.server.command(Commands.INPUTS)
+               .command(Commands.Arrow.LEFT)
+               .command(Commands.Arrow.LEFT)
+               .command(Commands.ENTER);
+}
+
+
 module.exports = LgTvModule;

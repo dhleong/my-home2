@@ -117,6 +117,16 @@ exapp.intent("MediaIntent", function(req, res) {
     }
 });
 
+exapp.intent("SelectPlaystationIntent", function(req, res) {
+    lgtv.switchToPs4();
+    res.ask("Okay?");
+});
+
+exapp.intent("SelectWiiIntent", function(req, res) {
+    lgtv.switchToWii();
+    res.tell("Okay");
+});
+
 exapp.listen(EXPRESSIVE_PORT, function() {
     mdns.createAdvertisement(mdns.tcp('http'), EXPRESSIVE_PORT).start();
 });
