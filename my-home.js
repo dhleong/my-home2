@@ -66,6 +66,14 @@ Object.keys(devices).forEach(function(key) {
     });
 });
 
+function askIf(res, condition, question) {
+    if (condition) {
+        res.ask(question + "?");
+    } else {
+        res.tell(question);
+    }
+}
+
 /**
  * Ensure all media Methods are formatted correctly.
  *  Mostly just demoing the slot() middleware util
@@ -86,11 +94,7 @@ exapp.intent("MediaIntent", function(req, res) {
         // see above
         lgtv.handleInput(['click']);
 
-        if (method == 'click') {
-            res.ask("Okay?");
-        } else {
-            res.tell("Okay");
-        }
+        askIf(res, method == 'click', 'Okay');
         break;
 
     case 'right':
@@ -104,7 +108,7 @@ exapp.intent("MediaIntent", function(req, res) {
     case 'stop':
     case 'back':
         lgtv.handleInput(['back']);
-        res.tell("Okay");
+        askIf(res, method == 'back', 'Okay');
         break;
 
     case 'end':
