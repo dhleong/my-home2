@@ -61,14 +61,14 @@ LgTvModule.prototype.commands = {
     };
 });
 
-LgTvModule.prototype.switchToWii() {
+LgTvModule.prototype.switchToWii = function() {
     this.server.command(Commands.INPUTS)
                .command(Commands.Arrow.RIGHT)
                .command(Commands.Arrow.RIGHT)
                .command(Commands.ENTER);
 }
 
-LgTvModule.prototype.switchToPs4() {
+LgTvModule.prototype.switchToPs4 = function() {
     this.server.command(Commands.INPUTS)
                .command(Commands.Arrow.LEFT)
                .command(Commands.Arrow.LEFT)
