@@ -27,11 +27,14 @@ PsModule.prototype.connect = function() {
                 return;
             }
 
+            console.log("Connecting to PS4...");
             var rinfo = result.rinfo;
             self.socket = newSocket({
                 accountId: creds['user-credential']
               , host: rinfo.address
               , pin: '' // assume it's already handled by ps4-waker binary
+            }).on('connected', function() {
+                console.log("Connected to PS4");
             }).on('ready', function() {
                 deferred.resolve(self);
             }).on('error', function(err) {
