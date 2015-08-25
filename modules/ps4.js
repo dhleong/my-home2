@@ -121,6 +121,7 @@ PsModule.prototype.turnOn = function() {
  */
 PsModule.prototype.detect = function() {
     return this._detect().then(function(result) {
+        console.log("PS4 Detect result:", result);
         return result.device.status.toUpperCase() == "OK"
     });
 }
