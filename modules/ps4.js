@@ -11,7 +11,9 @@ var util = require('util')
 
 function PsModule(credentials) {
     this.socket = null;
-    this.waker = new Waker(credentials);
+    this.waker = new Waker(credentials, {
+        keepSocket: true
+    });
 }
 util.inherits(PsModule, events.EventEmitter);
 
@@ -85,7 +87,7 @@ PsModule.prototype.turnOff = function() {
         doRequestStandby();
     } else {
         console.log("No socket; connecting before requesting standby");
-        this.connect().then(doRequestStandby);
+        this.turnOn().then(doRequestStandby);
     }
 
 }
@@ -101,17 +103,35 @@ PsModule.prototype.turnOn = function() {
     var self = this;
     return Q.Promise(function(resolve, reject) {
         console.log("Calling waker");
-        self.waker.wake(WAKE_TIMEOUT, function(err) {
+        self.waker.wake(WAKE_TIMEOUT, function(err, socket) {
             console.log("Wake result", err);
             if (err) return reject(err);
+            if (!socket) return reject(new Error("No socket"));
 
-            self.connect()
-            .then(function() {
-                resolve(self);
-            })
-            .fail(function(err) {
-                reject(err);
+            socket.on('connected', function() {
+                console.log("Connected to PS4");
+            }).on('ready', function() {
+                console.log("PS4 connection ready");
+            }).on('login_result', function(result) {
+                console.log("Login result", result);
+            }).on('error', function(err) {
+                console.error('PS4 Socket Error', err);
+            }).on('disconnected', function() {
+                console.log("Lost connection");
+                self.socket = null;
+                self.emit('disconnected', self);
             });
+
+            self.socket = socket;
+            resolve(self);
+
+            // self.connect()
+            // .then(function() {
+            //     resolve(self);
+            // })
+            // .fail(function(err) {
+            //     reject(err);
+            // });
         });
     });
 }
