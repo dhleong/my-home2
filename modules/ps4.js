@@ -125,6 +125,8 @@ PsModule.prototype.turnOn = function() {
                 console.log("PS4 connection ready");
             }).on('login_result', function(result) {
                 console.log("Login result", result);
+            }).on('login_retry', function() {
+                console.log("Retrying login");
             }).on('error', function(err) {
                 console.error('PS4 Socket Error', err);
             }).on('disconnected', function() {
