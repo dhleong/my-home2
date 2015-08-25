@@ -11,12 +11,16 @@ var util = require('util')
 
 function PsModule(credentials) {
     this.socket = null;
-    this.waker = new Waker(credentials, {
+    this.credentials = credentials;
+}
+util.inherits(PsModule, events.EventEmitter);
+
+PsModule.prototype.waker = function() {
+    return new Waker(this.credentials, {
         keepSocket: true
       , errorIfAwake: false
     });
 }
-util.inherits(PsModule, events.EventEmitter);
 
 PsModule.prototype.connect = function() {
     console.log("connect()");
@@ -24,7 +28,7 @@ PsModule.prototype.connect = function() {
     return this._detect()
     .then(function(result) {
         var deferred = Q.defer();
-        self.waker.readCredentials(function(err, creds) {
+        self.waker().readCredentials(function(err, creds) {
             if (err) {
                 console.error("No credentials found");
                 process.exit(1);
@@ -104,7 +108,7 @@ PsModule.prototype.turnOn = function() {
     var self = this;
     return Q.Promise(function(resolve, reject) {
         console.log("Calling waker");
-        self.waker.wake(WAKE_TIMEOUT, function(err, socket) {
+        self.waker().wake(WAKE_TIMEOUT, function(err, socket) {
             console.log("Wake result", err);
             if (err) return reject(err);
             if (!socket) return reject(new Error("No socket"));
