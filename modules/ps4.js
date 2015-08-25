@@ -16,6 +16,7 @@ function PsModule(credentials) {
 util.inherits(PsModule, events.EventEmitter);
 
 PsModule.prototype.connect = function() {
+    console.log("connect()");
     var self = this;
     return this._detect()
     .then(function(result) {
@@ -93,12 +94,15 @@ PsModule.prototype.turnOff = function() {
 PsModule.prototype.turnOn = function() {
     if (this.socket) {
         // already on
+        console.log("PS4 Already on");
         return Q(this);
     }
 
     var self = this;
     return Q.Promise(function(resolve, reject) {
+        console.log("Calling waker");
         self.waker.wake(WAKE_TIMEOUT, function(err) {
+            console.log("Wake result", err);
             if (err) return reject(err);
 
             self.connect()
@@ -127,6 +131,7 @@ PsModule.prototype.detect = function() {
 }
 
 PsModule.prototype._detect = function() {
+    console.log("_detect()");
     return Q.Promise(function(resolve, reject) {
         Detector.findAny(DETECT_TIMEOUT, function(err, device, rinfo) {
             if (err) return reject(err);
