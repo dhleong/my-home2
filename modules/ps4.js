@@ -13,6 +13,7 @@ function PsModule(credentials) {
     this.socket = null;
     this.waker = new Waker(credentials, {
         keepSocket: true
+      , errorIfAwake: false
     });
 }
 util.inherits(PsModule, events.EventEmitter);
