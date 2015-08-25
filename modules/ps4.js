@@ -19,6 +19,12 @@ PsModule.prototype.waker = function() {
     return new Waker(this.credentials, {
         keepSocket: true
       , errorIfAwake: false
+    }).on('need-credentials', function(d) {
+        console.log("NEED CREDS!?", d);
+    }).on('device-notified', function(d) {
+        console.log("Sent WAKEUP to", d);
+    }).on('logging-in', function(d) {
+        console.log("Logging into", d);
     });
 }
 
