@@ -36,7 +36,10 @@ PsModule.prototype.connect = function() {
             }).on('connected', function() {
                 console.log("Connected to PS4");
             }).on('ready', function() {
+                console.log("PS4 connection ready");
                 deferred.resolve(self);
+            }).on('login_result', function(result) {
+                console.log("Login result", result);
             }).on('error', function(err) {
                 console.error('Unable to connect to PS4 at', 
                     rinfo.address, err);
