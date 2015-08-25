@@ -101,6 +101,9 @@ exapp.intent("MediaIntent", function(req, res) {
     case 'left':
     case 'up':
     case 'down':
+    case 'forward':
+    case 'fast forward':
+    case 'fast-forward':
         lgtv.handleInput([method]);
         res.ask("Okay?");
         break;

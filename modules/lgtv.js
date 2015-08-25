@@ -29,7 +29,7 @@ LgTvModule.prototype.handleInput = function(input) {
         return;
     }
 
-    var cmd = input[0];
+    var cmd = input[0].replace(/[ -]/g, '_');
     var args = input.slice(1);
     var commandFun = this.commands[cmd];
     if (commandFun) {
@@ -52,6 +52,18 @@ LgTvModule.prototype.commands = {
     }
   , navigate: function(parts) {
         console.log(parts);
+    }
+  , forward: function() {
+        this.server.command(Commands.Arrow.RIGHT)
+                   .command(Commands.Arrow.RIGHT)
+                   .command(Commands.Arrow.RIGHT)
+                   .command(Commands.Arrow.RIGHT);
+    }
+  , fast_forward: function() {
+        this.server.command(Commands.Arrow.RIGHT)
+                   .command(Commands.Arrow.RIGHT)
+                   .command(Commands.Arrow.RIGHT)
+                   .command(Commands.Arrow.RIGHT);
     }
 };
 
