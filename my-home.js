@@ -21,14 +21,12 @@ var devices = {
         .on('off', function() {
             ps4.turnOff();
             console.log("Turn OFF PS4");
-            insomniac.allowSleep();
         })
         .on('on', function() {
             ps4.turnOn().fail(function(err) {
                 console.warn("UNABLE to turn ON PS4", err);
             });
             console.log("Turn ON PS4");
-            insomniac.stayAwake();
         })
 
   , tv: wemore.Emulate({friendlyName: "Television"})
@@ -143,9 +141,13 @@ exapp.listen(EXPRESSIVE_PORT, function() {
 
 ps4.detect().then(function(isAwake) {
     if (isAwake) {
-        insomniac.stayAwake();
         ps4.connect();
     }
+});
+
+ps4.on('connected', function() {
+    console.log("Connected to PS4");
+    insomniac.stayAwake();
 });
 
 ps4.on('disconnected', function() {

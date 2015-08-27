@@ -1,6 +1,6 @@
 
 var spawn = require('child_process').spawn
-  , OSX = process.platform == 'darwin'
+  , OSX = process.platform == 'darwin';
 
 
 /**
@@ -16,6 +16,7 @@ KeepAlive.prototype.stayAwake = function() {
     if (this.isAwake) return;
 
     if (OSX) {
+        console.log("Make Awake");
         this.isAwake = true;
         this.proc = spawn('caffeinate', ['-is']);
     }
@@ -25,6 +26,7 @@ KeepAlive.prototype.allowSleep = function() {
     if (!this.isAwake) return;
 
     if (OSX) {
+        console.log("Allow sleep");
         this.isAwake = false;
         this.proc.kill();
     }

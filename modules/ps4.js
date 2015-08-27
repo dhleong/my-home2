@@ -4,7 +4,6 @@ var util = require('util')
   , Q = require('q')
   , Waker = require('ps4-waker')
   , Detector = Waker.Detector
-  , newSocket = Waker.Socket
 
   , DETECT_TIMEOUT = 5000
   , WAKE_TIMEOUT = 5000;
@@ -29,44 +28,7 @@ PsModule.prototype.waker = function() {
 }
 
 PsModule.prototype.connect = function() {
-    console.log("connect()");
-    var self = this;
-    return this._detect()
-    .then(function(result) {
-        var deferred = Q.defer();
-        self.waker().readCredentials(function(err, creds) {
-            if (err) {
-                console.error("No credentials found");
-                process.exit(1);
-                return;
-            }
-
-            console.log("Connecting to PS4...");
-            var rinfo = result.rinfo;
-            self.socket = newSocket({
-                accountId: creds['user-credential']
-              , host: rinfo.address
-              , pin: '' // assume it's already handled by ps4-waker binary
-            }).on('connected', function() {
-                console.log("Connected to PS4");
-            }).on('ready', function() {
-                console.log("PS4 connection ready");
-                deferred.resolve(self);
-            }).on('login_result', function(result) {
-                console.log("Login result", result);
-            }).on('error', function(err) {
-                console.error('Unable to connect to PS4 at', 
-                    rinfo.address, err);
-                deferred.reject(err);
-            }).on('disconnected', function() {
-                console.log("Lost connection");
-                self.socket = null;
-                self.emit('disconnected', self);
-            });
-
-            return deferred.promise;
-        });
-    });
+    return this.turnOn();
 }
 
 PsModule.prototype.start = function(titleId) {
@@ -97,8 +59,15 @@ PsModule.prototype.turnOff = function() {
     if (this.socket) {
         doRequestStandby();
     } else {
-        console.log("No socket; connecting before requesting standby");
-        this.turnOn().then(doRequestStandby);
+        console.log("No socket; checking status");
+        this.detect().then(function(isAlive) {
+            if (isAlive) {
+                console.log("PS4 is awake; connecting before requesting standby");
+                return this.turnOn().then(doRequestStandby);
+            } else {
+                console.log("PS4 is already asleep!");
+            }
+        });
     }
 
 }
@@ -120,7 +89,8 @@ PsModule.prototype.turnOn = function() {
             if (!socket) return reject(new Error("No socket"));
 
             socket.on('connected', function() {
-                console.log("Connected to PS4");
+                console.log("Acquired connection");
+                self.emit('connected', self);
             }).on('ready', function() {
                 console.log("PS4 connection ready");
             }).on('login_result', function(result) {
