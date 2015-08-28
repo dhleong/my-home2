@@ -107,6 +107,15 @@ PsModule.prototype.turnOn = function() {
 
             self.socket = socket;
             resolve(self);
+ 
+            // checking socket.client is a hack to
+            //  confirm that we're already connected
+            if (socket.client) {
+                // in fact, if we have a socket here
+                //  it should be connected...
+                self.emit('connected', self);
+            }
+
 
             // self.connect()
             // .then(function() {
