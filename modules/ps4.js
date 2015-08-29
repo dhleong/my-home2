@@ -63,7 +63,11 @@ PsModule.prototype.turnOff = function() {
         this.detect().then(function(isAlive) {
             if (isAlive) {
                 console.log("PS4 is awake; connecting before requesting standby");
-                return this.turnOn().then(doRequestStandby);
+                return this.turnOn()
+                .then(doRequestStandby)
+                .fail(function(err) {
+                    console.log("Couldn't connect!", err);
+                });
             } else {
                 console.log("PS4 is already asleep!");
             }
