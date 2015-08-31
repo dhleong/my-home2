@@ -52,7 +52,6 @@ PsModule.prototype.turnOff = function() {
         console.log("Requesting standby...");
         self.socket.requestStandby(function(err) {
             console.log("Requested standby:", err);
-            self.socket = null;
         });
     }
 
