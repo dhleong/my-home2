@@ -52,6 +52,14 @@ PsModule.prototype.turnOff = function() {
         console.log("Requesting standby...");
         self.socket.requestStandby(function(err) {
             console.log("Requested standby:", err);
+            if (err) {
+                console.log("Error requesting standby; disconnect and retry");
+                self.socket.close();
+                self.socket = null;
+                setTimeout(function() {
+                    self.turnOff();
+                }, 500);
+            }
         });
     }
 
@@ -90,6 +98,11 @@ PsModule.prototype.turnOn = function() {
             console.log("Wake result", err);
             if (err) return reject(err);
             if (!socket) return reject(new Error("No socket"));
+
+            if (self.socket) {
+                console.log("Close existing socket");
+                self.socket.close();
+            }
 
             socket.on('connected', function() {
                 console.log("Acquired connection");
