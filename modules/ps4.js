@@ -70,7 +70,7 @@ PsModule.prototype.turnOff = function() {
         this.detect().then(function(isAlive) {
             if (isAlive) {
                 console.log("PS4 is awake; connecting before requesting standby");
-                return this.turnOn()
+                return self.turnOn()
                 .then(doRequestStandby)
                 .fail(function(err) {
                     console.log("Couldn't connect!", err);
@@ -91,6 +91,7 @@ PsModule.prototype.turnOn = function() {
         return Q(this);
     }
 
+    console.log("Prepare promise");
     var self = this;
     return Q.Promise(function(resolve, reject) {
         console.log("Calling waker");
