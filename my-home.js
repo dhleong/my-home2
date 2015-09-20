@@ -55,6 +55,14 @@ var devices = {
             console.log("Turn ON Netflix");
         })
 
+  , atoz: wemore.Emulate({friendlyName: "Amazon Video"})
+        .on('on', function() {
+            ps4.turnOn()
+            .then(function(ps4) {
+                ps4.start('CUSA00130');
+            });
+            console.log("Turn ON Amazon Video");
+        })
 }
 
 Object.keys(devices).forEach(function(key) {
