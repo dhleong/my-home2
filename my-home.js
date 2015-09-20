@@ -114,16 +114,19 @@ exapp.intent("MediaIntent", function(req, res) {
 
     case 'end':
     case 'done':
+    case 'enough':
+    case 'cancel':
+    case 'thats it':
         res.tell("Done!");
         break;
 
     default:
-        res.tell("I don't know how to " + method);
+        res.ask("I don't know how to " + method);
     }
 });
 
 exapp.launch(function(req, res) {
-    res.tell("What should I do?");
+    res.ask("What should I do?");
 });
 
 exapp.intent("SelectPlaystationIntent", function(req, res) {
