@@ -122,6 +122,10 @@ exapp.intent("MediaIntent", function(req, res) {
     }
 });
 
+exapp.launch(function(req, res) {
+    res.tell("What should I do?");
+});
+
 exapp.intent("SelectPlaystationIntent", function(req, res) {
     if (!lgtv) lgtv = new TvModule();
     lgtv.switchToPs4();
