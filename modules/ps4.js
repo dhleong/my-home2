@@ -18,6 +18,7 @@ PsModule.prototype.waker = function() {
     return new Waker(this.credentials, {
         keepSocket: true
       , errorIfAwake: false
+      , debug: true
     }).on('need-credentials', function(d) {
         console.log("NEED CREDS!?", d);
     }).on('device-notified', function(d) {

@@ -14,6 +14,14 @@ var mdns = require('mdns')
   , exapp = expressive()
   , EXPRESSIVE_PORT = 54321;
 
+function connectPs4IfActive() {
+    ps4.detect().then(function(isAwake) {
+        if (isAwake) {
+            ps4.connect();
+        }
+    });
+}
+
 var devices = {
     // NB: "playstation" gets heard as "play station"
     //  by Echo and isn't handled by the wemo stuff
@@ -89,6 +97,12 @@ exapp.slot('Method', function(req, res, next, methodName) {
     next();
 });
 
+exapp.use(function(req, res, next) {
+    connectPs4IfActive();
+
+    next();
+});
+
 exapp.intent("MediaIntent", function(req, res) {
     if (!lgtv) lgtv = new TvModule();
     var method = req.attr('Method');
@@ -153,13 +167,6 @@ exapp.listen(EXPRESSIVE_PORT, function() {
     mdns.createAdvertisement(mdns.tcp('http'), EXPRESSIVE_PORT).start();
 });
 
-
-ps4.detect().then(function(isAwake) {
-    if (isAwake) {
-        ps4.connect();
-    }
-});
-
 ps4.on('connected', function() {
     console.log("Connected to PS4");
     insomniac.stayAwake();
@@ -170,3 +177,6 @@ ps4.on('disconnected', function() {
     insomniac.allowSleep();
     lgtv = null;
 });
+
+// go ahead and do this right away
+connectPs4IfActive();
