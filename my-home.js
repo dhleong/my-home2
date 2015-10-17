@@ -18,6 +18,7 @@ function connectPs4IfActive() {
     ps4.detect().then(function(isAwake) {
         if (isAwake) {
             ps4.connect();
+            insomniac.stayAwake();
         }
     });
 }
@@ -31,7 +32,12 @@ var devices = {
             console.log("Turn OFF PS4");
         })
         .on('on', function() {
-            ps4.turnOn().fail(function(err) {
+            ps4.turnOn()
+            .then(function() {
+                // make sure
+                insomniac.stayAwake();
+            })
+            .fail(function(err) {
                 console.warn("UNABLE to turn ON PS4", err);
             });
             console.log("Turn ON PS4");
@@ -42,6 +48,7 @@ var devices = {
             if (!lgtv) lgtv = new TvModule();
             lgtv.handleInput(['power']);
             console.log("Turn OFF TV");
+            insomniac.allowSleep(); // if TV is off, we definitely aren't needed
 
             // NB: keeping the instance cached
             //  all the time is finicky, but it
@@ -58,6 +65,7 @@ var devices = {
         .on('on', function() {
             ps4.turnOn()
             .then(function(ps4) {
+                connectPs4IfActive();
                 ps4.start('CUSA00129');
             });
             console.log("Turn ON Netflix");
@@ -67,6 +75,7 @@ var devices = {
         .on('on', function() {
             ps4.turnOn()
             .then(function(ps4) {
+                connectPs4IfActive();
                 ps4.start('CUSA00130');
             });
             console.log("Turn ON Amazon Video");
@@ -76,6 +85,7 @@ var devices = {
         .on('on', function() {
             ps4.turnOn()
             .then(function(ps4) {
+                connectPs4IfActive();
                 ps4.start('CUSA01015');
             });
             console.log("Turn ON Youtube");
