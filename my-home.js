@@ -90,6 +90,18 @@ var devices = {
             });
             console.log("Turn ON Youtube");
         })
+
+  , subs: wmore.Emulate({friendlyName: "Subtitles"})
+      .on('on', function() {
+          if (!lgtv) lgtv = new TvModule();
+          lgtv.setSubsOn(true);
+          console.log("Turn ON Subtitles");
+      })
+      .on('off', function() {
+          if (!lgtv) lgtv = new TvModule();
+          lgtv.setSubsOn(false);
+          console.log("Turn ON Subtitles");
+      })
 }
 
 Object.keys(devices).forEach(function(key) {
