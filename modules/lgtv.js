@@ -74,6 +74,13 @@ LgTvModule.prototype.commands = {
 });
 
 LgTvModule.prototype.switchToWii = function() {
+    if (!self.ready) {
+        self.once('ready', function() {
+            self.switchToWii();
+        });
+        return;
+    }
+
     this.server.command(Commands.INPUTS)
                .command(Commands.Arrow.RIGHT)
                .command(Commands.Arrow.RIGHT)
@@ -81,6 +88,13 @@ LgTvModule.prototype.switchToWii = function() {
 }
 
 LgTvModule.prototype.switchToPs4 = function() {
+    if (!self.ready) {
+        self.once('ready', function() {
+            self.switchToPs4();
+        });
+        return;
+    }
+
     this.server.command(Commands.INPUTS)
                .command(Commands.Arrow.LEFT)
                .command(Commands.Arrow.LEFT)
@@ -88,6 +102,13 @@ LgTvModule.prototype.switchToPs4 = function() {
 }
 
 LgTvModule.prototype.setSubsOn = function(subsOn) {
+    if (!self.ready) {
+        self.once('ready', function() {
+            self.setSubsOn(subsOn);
+        });
+        return;
+    }
+
     this.server.command(Commands.Arrow.DOWN)
                .command(Commands.Arrow.DOWN)
                .command(Commands.ENTER)
