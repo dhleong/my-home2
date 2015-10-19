@@ -87,5 +87,17 @@ LgTvModule.prototype.switchToPs4 = function() {
                .command(Commands.ENTER);
 }
 
+LgTvModule.prototype.setSubsOn = function(subsOn) {
+    this.server.command(Commands.Arrow.DOWN)
+               .command(Commands.Arrow.DOWN)
+               .command(Commands.ENTER)
+               .command(Commands.Arrow.RIGHT)
+               .command(subsOn 
+                       ? Commands.Arrow.DOWN
+                       : Commands.Arrow.UP)
+               .command(Commands.ENTER)
+               .command(Commands.BACK)
+               .command(Commands.BACK);
+}
 
 module.exports = LgTvModule;
