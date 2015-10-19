@@ -91,7 +91,7 @@ var devices = {
             console.log("Turn ON Youtube");
         })
 
-  , subs: wmore.Emulate({friendlyName: "Subtitles"})
+  , subs: wemore.Emulate({friendlyName: "Subtitles"})
       .on('on', function() {
           if (!lgtv) lgtv = new TvModule();
           lgtv.setSubsOn(true);
