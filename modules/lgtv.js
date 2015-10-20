@@ -74,6 +74,7 @@ LgTvModule.prototype.commands = {
 });
 
 LgTvModule.prototype.switchToWii = function() {
+    var self = this;
     if (!self.ready) {
         self.once('ready', function() {
             self.switchToWii();
@@ -88,6 +89,7 @@ LgTvModule.prototype.switchToWii = function() {
 }
 
 LgTvModule.prototype.switchToPs4 = function() {
+    var self = this;
     if (!self.ready) {
         self.once('ready', function() {
             self.switchToPs4();
@@ -102,6 +104,7 @@ LgTvModule.prototype.switchToPs4 = function() {
 }
 
 LgTvModule.prototype.setSubsOn = function(subsOn) {
+    var self = this;
     if (!self.ready) {
         self.once('ready', function() {
             self.setSubsOn(subsOn);
