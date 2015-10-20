@@ -114,6 +114,8 @@ LgTvModule.prototype.setSubsOn = function(subsOn) {
 
     this.server.command(Commands.Arrow.DOWN)
                .command(Commands.Arrow.DOWN)
+               .command(Commands.Arrow.DOWN)
+               .command(Commands.ENTER)
                .command(Commands.ENTER)
                .command(Commands.Arrow.RIGHT)
                .command(Commands.Arrow.RIGHT)
