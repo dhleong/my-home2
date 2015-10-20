@@ -116,12 +116,14 @@ LgTvModule.prototype.setSubsOn = function(subsOn) {
                .command(Commands.Arrow.DOWN)
                .command(Commands.ENTER)
                .command(Commands.Arrow.RIGHT)
+               .command(Commands.Arrow.RIGHT)
                .command(subsOn 
                        ? Commands.Arrow.DOWN
                        : Commands.Arrow.UP)
                .command(Commands.ENTER)
                .command(Commands.BACK)
-               .command(Commands.BACK);
+               .command(Commands.BACK)
+               .command(Commands.Arrow.UP) ;
 }
 
 module.exports = LgTvModule;
