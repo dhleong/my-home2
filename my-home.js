@@ -100,7 +100,7 @@ var devices = {
       .on('off', function() {
           if (!lgtv) lgtv = new TvModule();
           lgtv.setSubsOn(false);
-          console.log("Turn ON Subtitles");
+          console.log("Turn OFF Subtitles");
       })
 }
 

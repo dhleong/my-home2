@@ -113,19 +113,30 @@ LgTvModule.prototype.setSubsOn = function(subsOn) {
     }
 
     this.server.command(Commands.Arrow.DOWN)
+               .delay()
                .command(Commands.Arrow.DOWN)
                .command(Commands.Arrow.DOWN)
                .command(Commands.ENTER)
+               .delay()
                .command(Commands.ENTER)
+               .delay()
                .command(Commands.Arrow.RIGHT)
+               .delay()
                .command(Commands.Arrow.RIGHT)
+               .delay(500)
                .command(subsOn 
                        ? Commands.Arrow.DOWN
                        : Commands.Arrow.UP)
                .command(Commands.ENTER)
-               .command(Commands.BACK)
-               .command(Commands.BACK)
-               .command(Commands.Arrow.UP) ;
+               .delay(200)
+               .command(Commands.Arrow.UP)
+               .delay(200)
+               .command(Commands.Arrow.UP)
+               .delay()
+               .command(Commands.Arrow.UP)
+               .delay(500) // just in case
+               .command(Commands.Arrow.UP)
+               ;
 }
 
 module.exports = LgTvModule;
