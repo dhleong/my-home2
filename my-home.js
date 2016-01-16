@@ -194,6 +194,12 @@ exapp.intent("SelectWiiIntent", function(req, res) {
     res.tell("Okay");
 });
 
+exapp.intent("FixAudioIntent", function(req, res) {
+    if (!lgtv) lgtv = new TvModule();
+    lgtv.fixAudio();
+    res.tell("Okay");
+});
+
 exapp.listen(EXPRESSIVE_PORT, function() {
     mdns.createAdvertisement(mdns.tcp('http'), EXPRESSIVE_PORT).start();
 });

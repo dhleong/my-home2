@@ -103,6 +103,29 @@ LgTvModule.prototype.switchToPs4 = function() {
                .command(Commands.ENTER);
 }
 
+LgTvModule.prototype.fixAudio = function() {
+    var self = this;
+    if (!self.ready) {
+        self.once('ready', function() {
+            self.fixAudio();
+        });
+        return;
+    }
+
+    this.server.command(Commands.INPUTS)
+               .delay()
+               .command(Commands.Arrow.LEFT)
+               .command(Commands.Arrow.LEFT)
+               .command(Commands.Arrow.LEFT)
+               .command(Commands.ENTER)
+               .delay()
+               .command(Commands.INPUTS)
+               .command(Commands.Arrow.RIGHT)
+               .command(Commands.Arrow.RIGHT)
+               .command(Commands.Arrow.RIGHT)
+               .command(Commands.ENTER) ;
+}
+
 LgTvModule.prototype.setSubsOn = function(subsOn) {
     var self = this;
     if (!self.ready) {
