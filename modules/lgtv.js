@@ -121,6 +121,7 @@ LgTvModule.prototype.fixAudio = function() {
                .delay()
                .delay()
                .command(Commands.INPUTS)
+               .delay()
                .command(Commands.Arrow.RIGHT)
                .command(Commands.Arrow.RIGHT)
                .command(Commands.Arrow.RIGHT)
