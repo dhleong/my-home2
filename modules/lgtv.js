@@ -113,13 +113,12 @@ LgTvModule.prototype.fixAudio = function() {
     }
 
     this.server.command(Commands.INPUTS)
-               .delay()
+               .delay(2000)
                .command(Commands.Arrow.LEFT)
                .command(Commands.Arrow.LEFT)
                .command(Commands.Arrow.LEFT)
                .command(Commands.ENTER)
-               .delay()
-               .delay()
+               .delay(2000)
                .command(Commands.INPUTS)
                .delay()
                .command(Commands.Arrow.RIGHT)
