@@ -61,35 +61,10 @@ var devices = {
             lgtv = null;
         })
 
-  , flix: wemore.Emulate({friendlyName: "Netflix"})
-        .on('on', function() {
-            ps4.turnOn()
-            .then(function(ps4) {
-                connectPs4IfActive();
-                ps4.start('CUSA00129');
-            });
-            console.log("Turn ON Netflix");
-        })
-
-  , atoz: wemore.Emulate({friendlyName: "Amazon Video"})
-        .on('on', function() {
-            ps4.turnOn()
-            .then(function(ps4) {
-                connectPs4IfActive();
-                ps4.start('CUSA00130');
-            });
-            console.log("Turn ON Amazon Video");
-        })
-
-  , tube: wemore.Emulate({friendlyName: "Youtube"})
-        .on('on', function() {
-            ps4.turnOn()
-            .then(function(ps4) {
-                connectPs4IfActive();
-                ps4.start('CUSA01015');
-            });
-            console.log("Turn ON Youtube");
-        })
+  , flix: ps4AppDevice("Netflix", 'CUSA00129')
+  , atoz: ps4AppDevice("Amazon Video", 'CUSA00130')
+  , tube: ps4AppDevice("Youtube", 'CUSA01015')
+  , hbog: ps4AppDevice("HBO", 'CUSA01567')
 
   , subs: wemore.Emulate({friendlyName: "Subtitles"})
       .on('on', function() {
@@ -102,7 +77,7 @@ var devices = {
           lgtv.setSubsOn(false);
           console.log("Turn OFF Subtitles");
       })
-}
+};
 
 Object.keys(devices).forEach(function(key) {
     devices[key].on('listening', function() {
@@ -110,6 +85,18 @@ Object.keys(devices).forEach(function(key) {
         mdns.createAdvertisement(mdns.tcp('http'), this.port).start();
     });
 });
+
+function ps4AppDevice(name, titleId) {
+    return wemore.Emulate({friendlyName: name})
+        .on('on', function() {
+            ps4.turnOn()
+                .then(function(ps4) {
+                    connectPs4IfActive();
+                    ps4.start(titleId);
+                });
+            console.log("Turn ON " + name);
+        })
+}
 
 function askIf(res, condition, question) {
     if (condition) {

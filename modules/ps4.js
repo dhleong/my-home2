@@ -26,11 +26,11 @@ PsModule.prototype.waker = function() {
     }).on('logging-in', function(d) {
         console.log("Logging into", d);
     });
-}
+};
 
 PsModule.prototype.connect = function() {
     return this.turnOn();
-}
+};
 
 PsModule.prototype.start = function(titleId) {
     if (!this.socket) {
@@ -44,7 +44,7 @@ PsModule.prototype.start = function(titleId) {
             resolve(self);
         });
     });
-}
+};
 
 PsModule.prototype.turnOff = function() {
 
@@ -62,7 +62,7 @@ PsModule.prototype.turnOff = function() {
                 }, 500);
             }
         });
-    }
+    };
 
     if (this.socket) {
         doRequestStandby();
@@ -82,7 +82,7 @@ PsModule.prototype.turnOff = function() {
         });
     }
 
-}
+};
 
 
 PsModule.prototype.turnOn = function() {
@@ -144,7 +144,7 @@ PsModule.prototype.turnOn = function() {
             // });
         });
     });
-}
+};
 
 
 /**
@@ -156,9 +156,9 @@ PsModule.prototype.turnOn = function() {
 PsModule.prototype.detect = function() {
     return this._detect().then(function(result) {
         console.log("PS4 Detect result:", result);
-        return result.device.status.toUpperCase() == "OK"
+        return result.device.status.toUpperCase() == "OK";
     });
-}
+};
 
 PsModule.prototype._detect = function() {
     console.log("_detect()");
@@ -169,6 +169,6 @@ PsModule.prototype._detect = function() {
             resolve({device: device, rinfo: rinfo});
         });
     });
-}
+};
 
 module.exports = PsModule;
