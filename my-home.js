@@ -1,18 +1,18 @@
 
-var mdns = require('mdns')
-  , expressive = require('echo-expressive')
-  , wemore = require('wemore')
-  , TvModule = require('./modules/lgtv')
-  , PsModule = require('./modules/ps4')
-  , KeepAlive = require('./keepalive')
-  
-  , PS4_CREDS = '/Users/dhleong/.ps4-wake.credentials.json'
-  , ps4 = new PsModule(PS4_CREDS)
-  , lgtv = null  // lazy init, in case it's off
-  , insomniac = new KeepAlive()
+const mdns = require('mdns');
+const expressive = require('echo-expressive');
+const wemore = require('wemore');
+const TvModule = require('./modules/lgtv');
+const PsModule = require('./modules/ps4');
+const KeepAlive = require('./keepalive');
 
-  , exapp = expressive()
-  , EXPRESSIVE_PORT = 54321;
+const PS4_CREDS = '/Users/dhleong/.ps4-wake.credentials.json';
+const ps4 = new PsModule(PS4_CREDS);
+let lgtv = null;  // lazy init, in case it's off
+const insomniac = new KeepAlive();
+
+const exapp = expressive();
+const EXPRESSIVE_PORT = 54321;
 
 function connectPs4IfActive() {
     ps4.detect().then(function(isAwake) {
@@ -33,17 +33,17 @@ var devices = {
         })
         .on('on', function() {
             ps4.turnOn()
-            .then(function() {
-                // make sure
-                insomniac.stayAwake();
-            })
-            .fail(function(err) {
-                console.warn("UNABLE to turn ON PS4", err);
-            });
+                .then(function() {
+                    // make sure
+                    insomniac.stayAwake();
+                })
+                .fail(function(err) {
+                    console.warn("UNABLE to turn ON PS4", err);
+                });
             console.log("Turn ON PS4");
-        })
+        }),
 
-  , tv: wemore.Emulate({friendlyName: "Television"})
+    tv: wemore.Emulate({friendlyName: "Television"})
         .on('off', function() {
             if (!lgtv) lgtv = new TvModule();
             lgtv.handleInput(['power']);
@@ -59,24 +59,24 @@ var devices = {
             //  the PS4, since we don't have an
             //  explicit signal
             lgtv = null;
+        }),
+
+    flix: ps4AppDevice("Netflix", 'CUSA00129'),
+    atoz: ps4AppDevice("Amazon Video", 'CUSA00130'),
+    tube: ps4AppDevice("Youtube", 'CUSA01015'),
+    hbog: ps4AppDevice("HBO", 'CUSA01567'),
+
+    subs: wemore.Emulate({friendlyName: "Subtitles"})
+        .on('on', function() {
+            if (!lgtv) lgtv = new TvModule();
+            lgtv.setSubsOn(true);
+            console.log("Turn ON Subtitles");
         })
-
-  , flix: ps4AppDevice("Netflix", 'CUSA00129')
-  , atoz: ps4AppDevice("Amazon Video", 'CUSA00130')
-  , tube: ps4AppDevice("Youtube", 'CUSA01015')
-  , hbog: ps4AppDevice("HBO", 'CUSA01567')
-
-  , subs: wemore.Emulate({friendlyName: "Subtitles"})
-      .on('on', function() {
-          if (!lgtv) lgtv = new TvModule();
-          lgtv.setSubsOn(true);
-          console.log("Turn ON Subtitles");
-      })
-      .on('off', function() {
-          if (!lgtv) lgtv = new TvModule();
-          lgtv.setSubsOn(false);
-          console.log("Turn OFF Subtitles");
-      })
+        .on('off', function() {
+            if (!lgtv) lgtv = new TvModule();
+            lgtv.setSubsOn(false);
+            console.log("Turn OFF Subtitles");
+        }),
 };
 
 Object.keys(devices).forEach(function(key) {
@@ -95,7 +95,7 @@ function ps4AppDevice(name, titleId) {
                     ps4.start(titleId);
                 });
             console.log("Turn ON " + name);
-        })
+        });
 }
 
 function askIf(res, condition, question) {

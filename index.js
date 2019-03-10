@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
-if (process.platform == 'darwin'
-      && 'now' != process.argv[2]) {
+if (
+    process.platform == 'darwin'
+    && 'now' != process.argv[2]
+) {
 
     var Service = require('node-mac').Service;
 
@@ -9,17 +11,15 @@ if (process.platform == 'darwin'
         name: 'MyHome',
         description: 'My Smarthome server',
         script: require('path').join(__dirname, 'my-home.js'),
-        cwd: __dirname
+        cwd: __dirname,
     });
 
     svc.on('install', function() {
         console.log("MyHome starting");
         svc.start();
-    })
-    .on('uninstall', function() {
+    }).on('uninstall', function() {
         console.log("MyHome uninstalled");
-    })
-    .on('error', function(e) {
+    }).on('error', function(e) {
         console.log(e);
     });
 
