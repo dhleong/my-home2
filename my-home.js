@@ -1,29 +1,39 @@
-
 const mdns = require('mdns');
 const expressive = require('echo-expressive');
 const wemore = require('wemore');
+
 const TvModule = require('./modules/lgtv');
 const PsModule = require('./modules/ps4');
 const KeepAlive = require('./keepalive');
 
 const PS4_CREDS = '/Users/dhleong/.ps4-wake.credentials.json';
 const ps4 = new PsModule(PS4_CREDS);
-let lgtv = null;  // lazy init, in case it's off
 const insomniac = new KeepAlive();
+let lgtv = null;  // lazy init, in case it's off
 
 const exapp = expressive();
 const EXPRESSIVE_PORT = 54321;
 
-function connectPs4IfActive() {
-    ps4.detect().then(function(isAwake) {
-        if (isAwake) {
-            ps4.connect();
-            insomniac.stayAwake();
-        }
-    });
+/** wrap a promise so failures don't crash the app */
+const safely = (promise) => promise.catch(e => { console.warn(e); });
+
+/**
+ * wrap an async function with a normal function that safely
+ * executes the async function (see safely)
+ */
+const safe =(asyncFn) => (...args) => {
+    safely(asyncFn(...args));
+};
+
+async function connectPs4IfActive() {
+    const isAwake = await ps4.detect();
+    if (isAwake) {
+        ps4.connect();
+        insomniac.stayAwake();
+    }
 }
 
-var devices = {
+const devices = {
     // NB: "playstation" gets heard as "play station"
     //  by Echo and isn't handled by the wemo stuff
     ps: wemore.Emulate({friendlyName: "PS4"})
@@ -31,17 +41,17 @@ var devices = {
             ps4.turnOff();
             console.log("Turn OFF PS4");
         })
-        .on('on', function() {
-            ps4.turnOn()
-                .then(function() {
-                    // make sure
-                    insomniac.stayAwake();
-                })
-                .fail(function(err) {
-                    console.warn("UNABLE to turn ON PS4", err);
-                });
-            console.log("Turn ON PS4");
-        }),
+        .on('on', safe(async () => {
+            try {
+                console.log("Turn ON PS4");
+                await ps4.turnOn();
+
+                // make sure
+                insomniac.stayAwake();
+            } catch (e) {
+                console.warn("UNABLE to turn ON PS4", e);
+            }
+        })),
 
     tv: wemore.Emulate({friendlyName: "Television"})
         .on('off', function() {
@@ -116,14 +126,14 @@ exapp.slot('Method', function(req, res, next, methodName) {
 });
 
 exapp.use(function(req, res, next) {
-    connectPs4IfActive();
+    safely(connectPs4IfActive());
 
     next();
 });
 
 exapp.intent("MediaIntent", function(req, res) {
     if (!lgtv) lgtv = new TvModule();
-    var method = req.attr('Method');
+    const method = req.attr('Method');
     switch (method) {
     case 'play':
     case 'pause':
@@ -203,4 +213,4 @@ ps4.on('disconnected', function() {
 });
 
 // go ahead and do this right away
-connectPs4IfActive();
+safely(connectPs4IfActive());
