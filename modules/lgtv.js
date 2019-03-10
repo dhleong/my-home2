@@ -4,7 +4,6 @@
 
 var util = require('util')
   , events = require('events')
-  , Q = require('q')
   , LgServer = require('lg-control')
   , Commands = LgServer.Commands;
 
@@ -20,7 +19,7 @@ function LgTvModule() {
 }
 util.inherits(LgTvModule, events.EventEmitter);
 
-LgTvModule.prototype.handleInput = function(input) {
+LgTvModule.prototype.handleInput = async function(input) {
     var self = this;
     if (!self.ready) {
         self.once('ready', function() {
@@ -34,11 +33,11 @@ LgTvModule.prototype.handleInput = function(input) {
     var commandFun = this.commands[cmd];
     if (commandFun) {
         this.commands[cmd].apply(this, args);
-        return Q(true);
+        return true;
     } else {
-        return Q(false);
+        return false;
     }
-}
+};
 
 LgTvModule.prototype.commands = {
     power: function() {
