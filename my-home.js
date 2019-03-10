@@ -21,14 +21,14 @@ const safely = (promise) => promise.catch(e => { console.warn(e); });
  * wrap an async function with a normal function that safely
  * executes the async function (see safely)
  */
-const safe =(asyncFn) => (...args) => {
+const safe = (asyncFn) => (...args) => {
     safely(asyncFn(...args));
 };
 
 async function connectPs4IfActive() {
     const isAwake = await ps4.detect();
     if (isAwake) {
-        ps4.connect();
+        await ps4.turnOn();
         insomniac.stayAwake();
     }
 }
