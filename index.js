@@ -15,6 +15,9 @@ if (
         env: [{
             name: "PROJECT_ROOT",
             value: __dirname,
+        }, {
+            name: "DEBUG",
+            value: 'home:*',
         }],
     });
 
