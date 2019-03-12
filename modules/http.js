@@ -30,7 +30,7 @@ class HttpModule {
             return {};
         });
 
-        s.listen(this.port, (err, address) => {
+        s.listen(this.port, '0.0.0.0', (err, address) => {
             if (err) throw err;
             console.log(`listening on ${address}`);
         });
