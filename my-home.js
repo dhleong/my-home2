@@ -1,10 +1,10 @@
 const mdns = require('mdns');
-const expressive = require('echo-expressive');
 const wemore = require('wemore');
 
 const TvModule = require('./modules/lgtv');
 const PsModule = require('./modules/ps4');
 const { YoutubeModule } = require('./modules/youtube');
+const { HttpModule } = require('./modules/http');
 const KeepAlive = require('./keepalive');
 
 const PS4_CREDS = '/Users/dhleong/.ps4-wake.credentials.json';
@@ -12,12 +12,12 @@ const YT_KEY = '/Users/dhleong/git/my-home2/yt.key';
 const YT_CREDS = '/Users/dhleong/git/my-home2/yt.curl.txt';
 
 const ps4 = new PsModule(PS4_CREDS);
-const youtube = new YoutubeModule(YT_KEY, YT_CREDS);  // eslint-disable-line
+const youtube = new YoutubeModule(YT_KEY, YT_CREDS);
 const insomniac = new KeepAlive();
 let lgtv = null;  // lazy init, in case it's off
 
-const exapp = expressive();
-const EXPRESSIVE_PORT = 54321;
+const HTTP_PORT = 54321;
+const http = new HttpModule(HTTP_PORT, youtube);
 
 /** wrap a promise so failures don't crash the app */
 const safely = (promise) => promise.catch(e => { console.warn(e); });
@@ -113,99 +113,6 @@ function ps4AppDevice(name, titleId) {
         });
 }
 
-function askIf(res, condition, question) {
-    if (condition) {
-        res.ask(question + "?");
-    } else {
-        res.tell(question);
-    }
-}
-
-/**
- * Ensure all media Methods are formatted correctly.
- *  Mostly just demoing the slot() middleware util
- */
-exapp.slot('Method', function(req, res, next, methodName) {
-    req.attr('Method', methodName.toLowerCase());
-    next();
-});
-
-exapp.use(function(req, res, next) {
-    safely(connectPs4IfActive());
-
-    next();
-});
-
-exapp.intent("MediaIntent", function(req, res) {
-    if (!lgtv) lgtv = new TvModule();
-    const method = req.attr('Method');
-    switch (method) {
-    case 'play':
-    case 'pause':
-    case 'resume':
-    case 'click':
-        // see above
-        lgtv.handleInput(['click']);
-
-        askIf(res, method == 'click', 'Okay');
-        break;
-
-    case 'right':
-    case 'left':
-    case 'up':
-    case 'down':
-    case 'forward':
-    case 'fast forward':
-    case 'fast-forward':
-        lgtv.handleInput([method]);
-        res.ask("Okay?");
-        break;
-
-    case 'stop':
-    case 'back':
-        lgtv.handleInput(['back']);
-        askIf(res, method == 'back', 'Okay');
-        break;
-
-    case 'end':
-    case 'done':
-    case 'enough':
-    case 'cancel':
-    case 'thats it':
-        res.tell("Done!");
-        break;
-
-    default:
-        res.ask("I don't know how to " + method);
-    }
-});
-
-exapp.launch(function(req, res) {
-    res.ask("What should I do?");
-});
-
-exapp.intent("SelectPlaystationIntent", function(req, res) {
-    if (!lgtv) lgtv = new TvModule();
-    lgtv.switchToPs4();
-    res.ask("Okay?");
-});
-
-exapp.intent("SelectWiiIntent", function(req, res) {
-    if (!lgtv) lgtv = new TvModule();
-    lgtv.switchToWii();
-    res.tell("Okay");
-});
-
-exapp.intent("FixAudioIntent", function(req, res) {
-    if (!lgtv) lgtv = new TvModule();
-    lgtv.fixAudio();
-    res.tell("Okay");
-});
-
-exapp.listen(EXPRESSIVE_PORT, function() {
-    mdns.createAdvertisement(mdns.tcp('http'), EXPRESSIVE_PORT).start();
-});
-
 ps4.on('connected', function() {
     console.log("Connected to PS4");
     insomniac.stayAwake();
@@ -216,6 +123,8 @@ ps4.on('disconnected', function() {
     insomniac.allowSleep();
     lgtv = null;
 });
+
+http.start();
 
 // go ahead and do this right away
 safely(connectPs4IfActive());
