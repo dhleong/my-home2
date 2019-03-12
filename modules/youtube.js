@@ -174,7 +174,7 @@ class YoutubeModule {
             url: PLAYLIST_ENDPOINT,
             json: true,
             qs: {
-                key: this.youtubeApiKey,
+                key: this.apiKey,
                 maxResults: 50,
                 part: 'snippet',
                 playlistId: id,
