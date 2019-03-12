@@ -2,7 +2,10 @@
 
 const fs = require('fs-extra');
 const request = require('request-promise-native');
+const { ChromecastDevice } = require('babbling');
 const debug = require('debug')('youtube');
+
+const CHROMECAST_DEVICE = 'Family Room TV';
 
 const HISTORY_URL = 'https://www.youtube.com/feed/history';
 const PLAYLIST_ENDPOINT = 'https://www.googleapis.com/youtube/v3/playlistItems';
@@ -68,10 +71,22 @@ class YoutubeModule {
     }
 
     async resumePlaylist(key) {
-        const { item, index } = await this._findPlaylistItemToResume(key);
+        const { item } = await this._findPlaylistItemToResume(key);
 
-        // TODO
-        console.log(item, '@', index);
+        debug('play', item);
+
+        // // TODO
+        // console.log(item, '@', index);
+        const device = new ChromecastDevice(CHROMECAST_DEVICE);
+        const app = await device.openApp('youtube', {
+            cookies: await this._readCookies(),
+        });
+
+        debug('got app', app.id);
+        await app.play(item.id);
+        device.close();
+
+        debug('done');
     }
 
     async _findPlaylistItemToResume(key) {
@@ -216,10 +231,9 @@ module.exports = {
     YoutubeModule,
 };
 
-new YoutubeModule(
-    '/Users/dhleong/git/my-home2/yt.key',
-    '/Users/dhleong/git/my-home2/yt.curl.txt'
-)
-    .resumePlaylist('critical-role')
-    .then(it => console.log(it));
-
+// new YoutubeModule(
+//     '/Users/dhleong/git/my-home2/yt.key',
+//     '/Users/dhleong/git/my-home2/yt.curl.txt'
+// )
+//     .resumePlaylist('critical-role')
+//     .then(it => console.log(it));
