@@ -57,9 +57,9 @@ class YoutubeModule {
      * We use HTTP creds to scrape the watch history
      * and an API key to pull playlist data (
      */
-    constructor(keyFile, credsFile) {
-        this.keyFile = keyFile;
-        this.credsFile = credsFile;
+    constructor(config) {
+        this.apiKey = config.youtubeApiKey;
+        this.credsFile = config.youtubeCurlFile;
 
         this.playlistContents = {
             // should look like:
@@ -169,12 +169,11 @@ class YoutubeModule {
         const id = PLAYLISTS[key];
         if (!id) throw new Error(`No such playlist ${key}`);
 
-        const apiKey = await this._readApiKey();
         const json = await request.get({
             url: PLAYLIST_ENDPOINT,
             json: true,
             qs: {
-                key: apiKey,
+                key: this.youtubeApiKey,
                 maxResults: 50,
                 part: 'snippet',
                 playlistId: id,

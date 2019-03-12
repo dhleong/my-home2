@@ -1,23 +1,21 @@
 const mdns = require('mdns');
 const wemore = require('wemore');
 
+const { loadConfig } = require('./modules/config');
 const TvModule = require('./modules/lgtv');
 const PsModule = require('./modules/ps4');
 const { YoutubeModule } = require('./modules/youtube');
 const { HttpModule } = require('./modules/http');
 const KeepAlive = require('./keepalive');
 
-const PS4_CREDS = '/Users/dhleong/.ps4-wake.credentials.json';
-const YT_KEY = '/Users/dhleong/git/my-home2/yt.key';
-const YT_CREDS = '/Users/dhleong/git/my-home2/yt.curl.txt';
+const config = loadConfig();
 
-const ps4 = new PsModule(PS4_CREDS);
-const youtube = new YoutubeModule(YT_KEY, YT_CREDS);
+const ps4 = new PsModule(config.ps4Creds);
+const youtube = new YoutubeModule(config);
 const insomniac = new KeepAlive();
 let lgtv = null;  // lazy init, in case it's off
 
-const HTTP_PORT = 54321;
-const http = new HttpModule(HTTP_PORT, youtube);
+const http = new HttpModule(config, youtube);
 
 /** wrap a promise so failures don't crash the app */
 const safely = (promise) => promise.catch(e => { console.warn(e); });

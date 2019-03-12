@@ -12,6 +12,10 @@ if (
         description: 'My Smarthome server',
         script: require('path').join(__dirname, 'my-home.js'),
         cwd: __dirname,
+        env: [{
+            name: "PROJECT_ROOT",
+            value: __dirname,
+        }],
     });
 
     svc.on('install', function() {

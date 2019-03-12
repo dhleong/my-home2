@@ -1,11 +1,10 @@
 const fastify = require('fastify');
 const debug = require('debug')('home:http');
 
-const TOKEN = 'toRENRd,CddkMexPWF}N6Nh8HkmUUL';
-
 class HttpModule {
-    constructor(port, yt) {
-        this.port = port;
+    constructor(config, yt) {
+        this.port = config.httpPort;
+        this.token = config.httpToken;
 
         this._yt = yt;
     }
@@ -20,7 +19,7 @@ class HttpModule {
         this._server = s;
         s.post('/action/play', async (req) => {
             if (!req.body.token) throw new Error('No token');
-            if (req.body.token !== TOKEN) throw new Error('Bad token');
+            if (req.body.token !== this.token) throw new Error('Bad token');
 
             debug('Starting', req.body.title);
             this._yt.resumePlaylist(req.body.title).catch(e => {
