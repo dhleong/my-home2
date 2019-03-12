@@ -78,6 +78,7 @@ class YoutubeModule {
             // start the app *first* so we feel more responsive
             const appPromise = device.openApp('youtube', {
                 cookies: await this._readCookies(),
+                deviceName: 'Home',
             });
 
             const itemPromise = this._findPlaylistItemToResume(key);
