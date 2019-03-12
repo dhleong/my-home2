@@ -71,22 +71,32 @@ class YoutubeModule {
     }
 
     async resumePlaylist(key) {
-        const { item } = await this._findPlaylistItemToResume(key);
-
-        debug('play', item);
-
-        // // TODO
-        // console.log(item, '@', index);
         const device = new ChromecastDevice(CHROMECAST_DEVICE);
-        const app = await device.openApp('youtube', {
-            cookies: await this._readCookies(),
-        });
+        debug('resume', key);
 
-        debug('got app', app.id);
-        await app.play(item.id);
-        device.close();
+        try {
+            // start the app *first* so we feel more responsive
+            const appPromise = device.openApp('youtube', {
+                cookies: await this._readCookies(),
+            });
 
-        debug('done');
+            const itemPromise = this._findPlaylistItemToResume(key);
+
+            // do both things in parallel; opening the app will probably
+            // be way faster than fetching the item anyway, but... might as well!
+            const [ app, item ] = await Promise.all([appPromise, itemPromise]);
+
+            debug('play', item);
+
+            await app.play(item.id, {
+                listId: PLAYLISTS[key],
+            });
+
+            debug('done!');
+
+        } finally {
+            device.close();
+        }
     }
 
     async _findPlaylistItemToResume(key) {
@@ -95,16 +105,12 @@ class YoutubeModule {
 
         debug(` - got history; checking each playlist item`);
         let found;
-        let index;
         for (const historyItem of history) {
-            index = 0;
             found = await this._forEachPlaylistItem(key, async (item) => {
                 if (historyItem.id === item.id) {
                     debug(` - found item!`, item.title);
                     return item;
                 }
-
-                ++index;
             });
 
             if (found) break;
@@ -114,10 +120,7 @@ class YoutubeModule {
             throw new Error(`Couldn't find next episode for ${key}`);
         }
 
-        return {
-            item: found,
-            index,
-        };
+        return found;
     }
 
     /**
@@ -219,10 +222,13 @@ class YoutubeModule {
     }
 
     async _readCookies() {
+        if (this._cookies) return this._cookies;
+
         const buf = await fs.readFile(this.credsFile);
         const rawCurl = buf.toString();
 
         const [ , cookies ] = rawCurl.match(/'cookie: (.*?)'/);
+        this._cookies = cookies;
         return cookies;
     }
 }
