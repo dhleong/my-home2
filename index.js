@@ -38,9 +38,12 @@ if (
         svc.stop();
         svc.uninstall();
 
-        console.log("... restarting...");
+        setTimeout(() => {
+            console.log("... restarting...");
+            svc.install();
+        }, 250);
+        break;
 
-        // fallthrough
     case "start":
         svc.install();
         break;
