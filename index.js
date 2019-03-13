@@ -34,7 +34,12 @@ if (
 
     switch (command) {
     case "restart":
-        svc.stop(); // jshint ignore:line
+        console.log("Stopping service, and ...");
+        svc.stop();
+        svc.uninstall();
+
+        console.log("... restarting...");
+
         // fallthrough
     case "start":
         svc.install();

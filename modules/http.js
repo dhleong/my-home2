@@ -15,7 +15,9 @@ class HttpModule {
             existing.close();
         }
 
-        const s = fastify();
+        const s = fastify({
+            logger: true,
+        });
         this._server = s;
         s.post('/action/play', async (req) => {
             if (!req.body.token) throw new Error('No token');
