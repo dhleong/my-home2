@@ -20,11 +20,11 @@
     "ps4-waker": "^1.8.1",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
-    "wemore": "^0.6.1"
+    "wemore": "^0.6.1",
+    "youtubish": "^0.1.0"
   },
   "devDependencies": {
-    "chai": "*",
-    "chai-as-promised": "^5.1.0",
-    "mocha": "*"
+    "chai": "^4.2.0",
+    "mocha": "^6.0.2"
   }
 }
