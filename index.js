@@ -36,12 +36,12 @@ if (
     case "restart":
         console.log("Stopping service, and ...");
         svc.stop();
-
-        svc.once('uninstall', function() {
-            console.log('... restarting...');
-            svc.install();
-        });
         svc.uninstall();
+
+        setTimeout(() => {
+            console.log("... restarting...");
+            svc.install();
+        }, 250);
         break;
 
     case "start":
