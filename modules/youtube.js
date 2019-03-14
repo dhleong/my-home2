@@ -1,6 +1,3 @@
-#!/usr/bin/env node
-
-const { ChromecastDevice } = require('babbling');
 const {
     CredentialsBuilder,
     WatchHistory,
@@ -9,11 +6,7 @@ const {
 
 const debug = require('debug')('home:youtube');
 
-const CHROMECAST_DEVICE = 'Family Room TV';
-
-const PLAYLISTS = {
-    'critical-role': 'PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_',
-};
+const { createChromecastDevice } = require('./cast');
 
 class YoutubeModule {
 
@@ -30,17 +23,17 @@ class YoutubeModule {
         this.creds = creds;
         this._history = new WatchHistory(creds);
         this._playlists = {};
-
-        for (const key of Object.keys(PLAYLISTS)) {
-            this._playlists[key] = new YoutubePlaylist(
-                creds, PLAYLISTS[key],
-            );
-        }
     }
 
-    async resumePlaylist(key) {
-        const device = new ChromecastDevice(CHROMECAST_DEVICE);
-        debug('resume', key);
+    async resumePlaylist(id) {
+        if (!this._playlists[id]) {
+            this._playlists[id] = new YoutubePlaylist(
+                this.creds, id,
+            );
+        }
+
+        const device = createChromecastDevice();
+        debug('resume', id);
 
         try {
             // start the app *first* so we feel more responsive
@@ -49,7 +42,7 @@ class YoutubeModule {
                 deviceName: 'Home',
             });
 
-            const itemPromise = this._findPlaylistItemToResume(key);
+            const itemPromise = this._findPlaylistItemToResume(id);
 
             // do both things in parallel; opening the app will probably
             // be way faster than fetching the item anyway, but... might as well!
@@ -58,7 +51,7 @@ class YoutubeModule {
             debug('play', item);
 
             await app.play(item.id, {
-                listId: PLAYLISTS[key],
+                listId: id,
             });
 
             debug('done!');
@@ -68,10 +61,10 @@ class YoutubeModule {
         }
     }
 
-    async _findPlaylistItemToResume(key) {
-        debug(`resumePlaylist(${key}): fetching history`);
-        const playlist = this._playlists[key];
-        if (!playlist) throw new Error(`No such playlist: ${key}`);
+    async _findPlaylistItemToResume(id) {
+        debug(`resumePlaylist(${id}): fetching history`);
+        const playlist = this._playlists[id];
+        if (!playlist) throw new Error(`No such playlist: ${id}`);
 
         return playlist.findMostRecentlyPlayed(this._history);
     }

@@ -4,18 +4,22 @@ const wemore = require('wemore');
 const { loadConfig } = require('./modules/config');
 const TvModule = require('./modules/lgtv');
 const PsModule = require('./modules/ps4');
+const { HuluModule } = require('./modules/hulu');
 const { YoutubeModule } = require('./modules/youtube');
+const { PlayerModule } = require('./modules/player');
 const { HttpModule } = require('./modules/http');
 const KeepAlive = require('./keepalive');
 
 const config = loadConfig();
 
+const hulu = new HuluModule(config);
 const ps4 = new PsModule(config.ps4Creds);
 const youtube = new YoutubeModule(config);
+const player = new PlayerModule(hulu, youtube);
 const insomniac = new KeepAlive();
 let lgtv = null;  // lazy init, in case it's off
 
-const http = new HttpModule(config, youtube);
+const http = new HttpModule(config, player);
 
 /** wrap a promise so failures don't crash the app */
 const safely = (promise) => promise.catch(e => { console.warn(e); });

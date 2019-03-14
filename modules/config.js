@@ -5,6 +5,8 @@ const format = {
     httpPort: 0,
     httpToken: '',
 
+    huluCookiesFile: '',
+
     ps4Creds: '',
 
     youtubeApiKey: '',

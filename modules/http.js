@@ -2,11 +2,11 @@ const fastify = require('fastify');
 const debug = require('debug')('home:http');
 
 class HttpModule {
-    constructor(config, yt) {
+    constructor(config, player) {
         this.port = config.httpPort;
         this.token = config.httpToken;
 
-        this._yt = yt;
+        this._player = player;
     }
 
     start() {
@@ -23,12 +23,16 @@ class HttpModule {
             if (!req.body.token) throw new Error('No token');
             if (req.body.token !== this.token) throw new Error('Bad token');
 
-            debug('Starting', req.body.title);
-            this._yt.resumePlaylist(req.body.title).catch(e => {
-                console.error('Unable to start', req.body.title, e);
-            });
+            if (req.body.title) {
+                debug('Starting', req.body.title);
+                await this._player.playTitle(req.body.title);
+            } else if (req.body['title-id']) {
+                const id = req.body['title-id'];
+                debug('Starting by id', id);
+                await this._player.playTitleId(id);
+            }
 
-            return {};
+            return {success: true};
         });
 
         s.listen(this.port, '0.0.0.0', (err, address) => {
