@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const debug = require('debug')('home:youtube');
 
 const { createChromecastDevice } = require('./cast');
+const { HuluApp } = require('babbling');
 
 class HuluModule {
 
@@ -15,7 +16,7 @@ class HuluModule {
 
         try {
             const cookies = await this._getCookies();
-            const app = await device.openApp('hulu', {
+            const app = await device.openApp(HuluApp, {
                 cookies,
             });
 

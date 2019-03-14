@@ -7,6 +7,7 @@ const {
 const debug = require('debug')('home:youtube');
 
 const { createChromecastDevice } = require('./cast');
+const { YoutubeApp } = require('babbling');
 
 class YoutubeModule {
 
@@ -37,7 +38,7 @@ class YoutubeModule {
 
         try {
             // start the app *first* so we feel more responsive
-            const appPromise = device.openApp('youtube', {
+            const appPromise = device.openApp(YoutubeApp, {
                 cookies: (await this.creds).cookies,
                 deviceName: 'Home',
             });
