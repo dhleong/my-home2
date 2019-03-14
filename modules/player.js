@@ -21,14 +21,24 @@ const TITLES = {
 
     // hulu
 
+    'blindspot': {
+        name: 'Blindspot',
+        play: huluSeries('626ff449-811f-44ad-94cd-2d48c2063619'),
+    },
+
     'brooklyn-nine-nine': {
-        name: 'Brooklyn Nine-Nine',
+        name: 'Brooklyn Nine - Nine',
         play: huluSeries('daf48b7a-6cd7-4ef6-b639-a4811ec95232'),
     },
 
     lost: {
         name: 'Lost',
         play: huluSeries('466b3994-b574-44f1-88bc-63707507a6cb'),
+    },
+
+    manifest: {
+        name: 'Manifest',
+        play: huluSeries('a1e5ed46-2704-431e-94b0-9aea1560c712'),
     },
 
     rookie: {
