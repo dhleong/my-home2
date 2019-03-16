@@ -14,5 +14,5 @@ The Google Home integration to start shows via the [http][4] and [player][5] mod
 [1]: https://ifttt.com/discover
 [2]: https://dnsomatic.com/
 [3]: https://freedns.afraid.org
-[4]: src/modules/http.js
-[5]: src/modules/player.js
+[4]: modules/http.js
+[5]: modules/player.js
