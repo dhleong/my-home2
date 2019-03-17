@@ -22,7 +22,6 @@ class YoutubeModule {
             .build();
 
         this.creds = creds;
-        this._history = new WatchHistory(creds);
         this._playlists = {};
     }
 
@@ -67,7 +66,14 @@ class YoutubeModule {
         const playlist = this._playlists[id];
         if (!playlist) throw new Error(`No such playlist: ${id}`);
 
-        return playlist.findMostRecentlyPlayed(this._history);
+        // NOTE: just always use a fresh WatchHistory so we're not
+        // looking at old data when trying to find the
+        // most-recently-played. If we had multiple playlists, we could
+        // potentially try to cache this for some minor wins, but the
+        // complexity just isn't worth it
+        return playlist.findMostRecentlyPlayed(
+            new WatchHistory(this.creds),
+        );
     }
 }
 
