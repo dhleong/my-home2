@@ -1,5 +1,6 @@
 const mdns = require('mdns');
 const wemore = require('wemore');
+const createUuid = require('uuid/v5');
 
 const { loadConfig } = require('./modules/config');
 const TvModule = require('./modules/lgtv');
@@ -43,7 +44,7 @@ async function connectPs4IfActive() {
 const devices = {
     // NB: "playstation" gets heard as "play station"
     //  by Echo and isn't handled by the wemo stuff
-    ps: wemore.Emulate({friendlyName: "PS4"})
+    ps: emulateDeviceWithName("PS4")
         .on('off', function() {
             ps4.turnOff();
             console.log("Turn OFF PS4");
@@ -60,7 +61,7 @@ const devices = {
             }
         })),
 
-    tv: wemore.Emulate({friendlyName: "Television"})
+    tv: emulateDeviceWithName("Television")
         .on('off', function() {
             if (!lgtv) lgtv = new TvModule();
             lgtv.handleInput(['power']);
@@ -83,7 +84,7 @@ const devices = {
     tube: ps4AppDevice("Youtube", 'CUSA01015'),
     hbog: ps4AppDevice("HBO", 'CUSA01567'),
 
-    subs: wemore.Emulate({friendlyName: "Subtitles"})
+    subs: emulateDeviceWithName("Subtitles")
         .on('on', function() {
             if (!lgtv) lgtv = new TvModule();
             lgtv.setSubsOn(true);
@@ -104,7 +105,7 @@ Object.keys(devices).forEach(function(key) {
 });
 
 function ps4AppDevice(name, titleId) {
-    return wemore.Emulate({friendlyName: name})
+    return emulateDeviceWithName(name)
         .on('on', function() {
             ps4.turnOn()
                 .then(function(ps4) {
@@ -113,6 +114,15 @@ function ps4AppDevice(name, titleId) {
                 });
             console.log("Turn ON " + name);
         });
+}
+
+function emulateDeviceWithName(name) {
+    const uuid = createUuid(name, config.uuidNamespace);
+    console.log("Creating", name, "=>", uuid);
+    return wemore.Emulate({
+        friendlyName: name,
+        uuid,
+    });
 }
 
 ps4.on('connected', function() {

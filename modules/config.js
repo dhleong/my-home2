@@ -9,6 +9,9 @@ const format = {
 
     ps4Creds: '',
 
+    // for uuidv5 of emulated devices
+    uuidNamespace: '',
+
     youtubeApiKey: '',
     youtubeCurlFile: '',
 };
