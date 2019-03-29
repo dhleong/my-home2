@@ -7,6 +7,12 @@ function youtubePlaylist(id) {
     };
 }
 
+function hboGoSeries(id) {
+    return (module) => {
+        return module._hbo.resumeSeries(id);
+    };
+}
+
 function huluSeries(id) {
     return (module) => {
         return module._hulu.resumeSeries(id);
@@ -17,6 +23,13 @@ const TITLES = {
     'critical-role': {
         name: 'Critical Role',
         play: youtubePlaylist('PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_'),
+    },
+
+    // hbo
+
+    'game-of-thrones': {
+        name: 'Game of Thrones',
+        play: hboGoSeries('urn:hbo:series:GVU2cggagzYNJjhsJATwo'),
     },
 
     // hulu
@@ -56,7 +69,8 @@ const MAX_SCORE = 5;
  * Routes media play/cast requests to the appropriate module
  */
 class PlayerModule {
-    constructor(hulu, yt) {
+    constructor(hbo, hulu, yt) {
+        this._hbo = hbo;
         this._hulu = hulu;
         this._yt = yt;
     }

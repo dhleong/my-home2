@@ -5,6 +5,7 @@ const createUuid = require('uuid/v5');
 const { loadConfig } = require('./modules/config');
 const TvModule = require('./modules/lgtv');
 const PsModule = require('./modules/ps4');
+const { HboGoModule } = require('./modules/hbo');
 const { HuluModule } = require('./modules/hulu');
 const { YoutubeModule } = require('./modules/youtube');
 const { PlayerModule } = require('./modules/player');
@@ -13,10 +14,11 @@ const KeepAlive = require('./keepalive');
 
 const config = loadConfig();
 
+const hbo = new HboGoModule(config);
 const hulu = new HuluModule(config);
 const ps4 = new PsModule(config.ps4Creds);
 const youtube = new YoutubeModule(config);
-const player = new PlayerModule(hulu, youtube);
+const player = new PlayerModule(hbo, hulu, youtube);
 const insomniac = new KeepAlive();
 let lgtv = null;  // lazy init, in case it's off
 

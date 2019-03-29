@@ -5,6 +5,7 @@ const format = {
     httpPort: 0,
     httpToken: '',
 
+    hbogoTokenFile: '',
     huluCookiesFile: '',
 
     ps4Creds: '',

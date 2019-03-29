@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const debug = require('debug')('home:youtube');
+const debug = require('debug')('home:hulu');
 
 const { createChromecastDevice } = require('./cast');
 const { HuluApp } = require('babbling');
