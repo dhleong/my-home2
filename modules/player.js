@@ -44,6 +44,11 @@ const TITLES = {
         play: huluSeries('daf48b7a-6cd7-4ef6-b639-a4811ec95232'),
     },
 
+    'good-place': {
+        name: 'Good Place',
+        play: huluSeries('f11df77f-115e-4eba-8efa-264f0ff322d0'),
+    },
+
     lost: {
         name: 'Lost',
         play: huluSeries('466b3994-b574-44f1-88bc-63707507a6cb'),
