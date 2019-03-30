@@ -1,69 +1,52 @@
 const debug = require('debug')('home:player');
+const {
+    ChromecastDevice, HboGoApp, HuluApp, PlayerBuilder, YoutubeApp,
+} = require('babbling');
+const { CredentialsBuilder } = require('youtubish');
+
 const leven = require('leven');
+const fs = require('fs-extra');
 
-function youtubePlaylist(id) {
-    return (module) => {
-        return module._yt.resumePlaylist(id);
-    };
+const CHROMECAST_DEVICE = 'Family Room TV';
+
+function nameToId(name) {
+    return name.toLowerCase().replace(/[^a-z0-9]+/, "-");
 }
 
-function hboGoSeries(id) {
-    return (module) => {
-        return module._hbo.resumeSeries(id);
-    };
-}
+const TITLES = [
 
-function huluSeries(id) {
-    return (module) => {
-        return module._hulu.resumeSeries(id);
-    };
-}
+    // Youtube
 
-const TITLES = {
-    'critical-role': {
-        name: 'Critical Role',
-        play: youtubePlaylist('PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_'),
-    },
+    ["Critical Role", "https://www.youtube.com/playlist?list=PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_"],
+
+    // TODO: not supported yet; Youtubish needs to be updated to
+    // load the playlist using cookies instead of APIKey so we
+    // can load private playlists
+    // ["Workout", "https://www.youtube.com/playlist?list=PLw6X_oq5Z8kmISsoG_HYn_WxcOKJDLO9V", {resume: false}],
 
     // hbo
 
-    'game-of-thrones': {
-        name: 'Game of Thrones',
-        play: hboGoSeries('urn:hbo:series:GVU2cggagzYNJjhsJATwo'),
-    },
+    ["Game of Thrones", "https://play.hbogo.com/series/urn:hbo:series:GVU2cggagzYNJjhsJATwo"],
 
-    // hulu
+    // hulu (NOTE: this urls are not quite right, but they should work)
 
-    'blindspot': {
-        name: 'Blindspot',
-        play: huluSeries('626ff449-811f-44ad-94cd-2d48c2063619'),
-    },
+    ["Blindspot", "https://www.hulu.com/series/626ff449-811f-44ad-94cd-2d48c2063619"],
 
-    'brooklyn-nine-nine': {
-        name: 'Brooklyn Nine - Nine',
-        play: huluSeries('daf48b7a-6cd7-4ef6-b639-a4811ec95232'),
-    },
+    ["Brooklyn Nine - Nine", "https://www.hulu.com/series/daf48b7a-6cd7-4ef6-b639-a4811ec95232"],
 
-    'good-place': {
-        name: 'Good Place',
-        play: huluSeries('f11df77f-115e-4eba-8efa-264f0ff322d0'),
-    },
+    ["Good Place", "https://www.hulu.com/series/f11df77f-115e-4eba-8efa-264f0ff322d0"],
 
-    lost: {
-        name: 'Lost',
-        play: huluSeries('466b3994-b574-44f1-88bc-63707507a6cb'),
-    },
+    ["Lost", "https://www.hulu.com/series/466b3994-b574-44f1-88bc-63707507a6cb"],
 
-    manifest: {
-        name: 'Manifest',
-        play: huluSeries('a1e5ed46-2704-431e-94b0-9aea1560c712'),
-    },
+    ["Manifest", "https://www.hulu.com/series/a1e5ed46-2704-431e-94b0-9aea1560c712"],
 
-    rookie: {
-        name: 'Rookie',
-        play: huluSeries('1138ee62-b9d9-4561-8094-3f7cda4bbd22'),
-    },
-};
+    ["Rookie", "https://www.hulu.com/series/1138ee62-b9d9-4561-8094-3f7cda4bbd22"],
+
+].reduce((m, [name, url, opts]) => {
+    const id = nameToId(name);
+    m[id] = { name, url, opts };
+    return m;
+}, {});
 
 /**
  * Max acceptable score
@@ -74,10 +57,8 @@ const MAX_SCORE = 5;
  * Routes media play/cast requests to the appropriate module
  */
 class PlayerModule {
-    constructor(hbo, hulu, yt) {
-        this._hbo = hbo;
-        this._hulu = hulu;
-        this._yt = yt;
+    constructor(config) {
+        this.config = config;
     }
 
     async playTitle(title) {
@@ -112,9 +93,38 @@ class PlayerModule {
     }
 
     async _play(titleObj) {
-        const { name, play } = titleObj;
-        debug('playing', name);
-        return play(this);
+        const { url, opts } = titleObj;
+        debug('playing', titleObj);
+        const player = await this._getPlayer();
+        return player.playUrl(url, opts);
+    }
+
+    async _getPlayer() {
+        if (this._player) return this._player;
+
+        const [ hboToken, huluCookies ] = await Promise.all([
+            fs.readFile(this.config.hbogoTokenFile),
+            fs.readFile(this.config.huluCookiesFile),
+        ]);
+
+        const p = new PlayerBuilder()
+            .withApp(HboGoApp, {
+                token: hboToken.toString(),
+            })
+            .withApp(HuluApp, {
+                cookies: huluCookies.toString(),
+            })
+            .withApp(YoutubeApp, {
+                deviceName: "Home",
+                youtubish: new CredentialsBuilder()
+                    .apiKey(this.config.youtubeApiKey)
+                    .cookiesFromCurlFile(this.config.youtubeCurlFile)
+                    .build(),
+            })
+            .addDevice(new ChromecastDevice(CHROMECAST_DEVICE))
+            .build();
+        this._player = p;
+        return p;
     }
 }
 
