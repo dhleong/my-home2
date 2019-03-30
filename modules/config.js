@@ -13,7 +13,6 @@ const format = {
     // for uuidv5 of emulated devices
     uuidNamespace: '',
 
-    youtubeApiKey: '',
     youtubeCurlFile: '',
 };
 

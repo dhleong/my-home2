@@ -19,10 +19,8 @@ const TITLES = [
 
     ["Critical Role", "https://www.youtube.com/playlist?list=PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_"],
 
-    // TODO: not supported yet; Youtubish needs to be updated to
-    // load the playlist using cookies instead of APIKey so we
-    // can load private playlists
-    // ["Workout", "https://www.youtube.com/playlist?list=PLw6X_oq5Z8kmISsoG_HYn_WxcOKJDLO9V", {resume: false}],
+    // never resume the workout playlist!
+    ["Workout", "https://www.youtube.com/playlist?list=PLw6X_oq5Z8kmISsoG_HYn_WxcOKJDLO9V", {resume: false}],
 
     // hbo
 
@@ -117,7 +115,6 @@ class PlayerModule {
             .withApp(YoutubeApp, {
                 deviceName: "Home",
                 youtubish: new CredentialsBuilder()
-                    .apiKey(this.config.youtubeApiKey)
                     .cookiesFromCurlFile(this.config.youtubeCurlFile)
                     .build(),
             })
