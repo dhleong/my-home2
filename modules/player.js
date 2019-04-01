@@ -99,7 +99,10 @@ class PlayerModule {
         if (this._player) return this._player;
 
         const p = (await PlayerBuilder.autoInflate(this.config.babblingConfigFile))
-            .withApp(YoutubeApp, { deviceName: "Home" })
+            .withApp(YoutubeApp, {
+                deviceName: "Home",
+                playlistsCache: {},
+            })
             .addDevice(new ChromecastDevice(CHROMECAST_DEVICE))
             .build();
         this._player = p;
