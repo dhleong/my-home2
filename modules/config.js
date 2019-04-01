@@ -2,18 +2,15 @@ const fs = require('fs');
 const path = require('path');
 
 const format = {
+    babblingConfigFile: '',
+
     httpPort: 0,
     httpToken: '',
-
-    hbogoTokenFile: '',
-    huluCookiesFile: '',
 
     ps4Creds: '',
 
     // for uuidv5 of emulated devices
     uuidNamespace: '',
-
-    youtubeCurlFile: '',
 };
 
 function loadConfig() {

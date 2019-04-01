@@ -1,11 +1,9 @@
 const debug = require('debug')('home:player');
 const {
-    ChromecastDevice, HboGoApp, HuluApp, PlayerBuilder, YoutubeApp,
+    ChromecastDevice, PlayerBuilder, YoutubeApp,
 } = require('babbling');
-const { CredentialsBuilder } = require('youtubish');
 
 const leven = require('leven');
-const fs = require('fs-extra');
 
 const CHROMECAST_DEVICE = 'Family Room TV';
 
@@ -100,24 +98,8 @@ class PlayerModule {
     async _getPlayer() {
         if (this._player) return this._player;
 
-        const [ hboToken, huluCookies ] = await Promise.all([
-            fs.readFile(this.config.hbogoTokenFile),
-            fs.readFile(this.config.huluCookiesFile),
-        ]);
-
-        const p = new PlayerBuilder()
-            .withApp(HboGoApp, {
-                token: hboToken.toString(),
-            })
-            .withApp(HuluApp, {
-                cookies: huluCookies.toString(),
-            })
-            .withApp(YoutubeApp, {
-                deviceName: "Home",
-                youtubish: new CredentialsBuilder()
-                    .cookiesFromCurlFile(this.config.youtubeCurlFile)
-                    .build(),
-            })
+        const p = (await PlayerBuilder.autoInflate(this.config.babblingConfigFile))
+            .withApp(YoutubeApp, { deviceName: "Home" })
             .addDevice(new ChromecastDevice(CHROMECAST_DEVICE))
             .build();
         this._player = p;
