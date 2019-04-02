@@ -10,7 +10,7 @@
   "author": "Daniel Leong",
   "license": "ISC",
   "dependencies": {
-    "babbling": "^1.5.1",
+    "babbling": "^1.5.2",
     "debug": "^4.1.1",
     "fastify": "^2.1.0",
     "fs-extra": "^7.0.1",
