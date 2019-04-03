@@ -2,6 +2,7 @@ const debug = require('debug')('home:player');
 const {
     ChromecastDevice, PlayerBuilder, YoutubeApp,
 } = require('babbling');
+const { pickBestMatchForTitle } = require('babbling/dist/cli/commands/find');
 
 const leven = require('leven');
 
@@ -74,7 +75,9 @@ class PlayerModule {
         }
 
         if (bestScore > MAX_SCORE) {
-            throw new Error(`No match for ${title}; closest was ${bestTitle.name} @${bestScore}`);
+            debug(`No match for ${title}; closest was ${bestTitle.name} @${bestScore}`);
+            await this._playBySearch(title);
+            return;
         }
 
         debug(`best match was ${bestTitle.name} @${bestScore}`);
@@ -93,6 +96,29 @@ class PlayerModule {
         debug('playing', titleObj);
         const player = await this._getPlayer();
         return player.playUrl(url, opts);
+    }
+
+    async _playBySearch(title) {
+        const p = await this._getPlayer();
+        const best = await pickBestMatchForTitle(
+            p.queryByTitle(title),
+            title,
+        );
+        if (!best) {
+            // TODO it'd be nice if we could surface these
+            // errors on the chromecast device somehow...
+            throw new Error(`Couldn't find anything for ${title}`);
+        }
+
+        // double check
+        const distance = leven(title.toLowerCase(), best.title.toLowerCase());
+        if (distance > MAX_SCORE) {
+            debug('found', best.title, 'but had distance', distance);
+            throw new Error(`No good match for ${title}`);
+        }
+
+        debug('playing', best.title, 'from', best.appName);
+        await p.play(best);
     }
 
     async _getPlayer() {
