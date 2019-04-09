@@ -110,12 +110,13 @@ class PlayerModule {
             throw new Error(`Couldn't find anything for ${title}`);
         }
 
-        // double check
-        const distance = leven(title.toLowerCase(), best.title.toLowerCase());
-        if (distance > MAX_SCORE) {
-            debug('found', best.title, 'but had distance', distance);
-            throw new Error(`No good match for ${title}`);
-        }
+        // NOTE: let's just trust babbling
+        // // double check
+        // const distance = leven(title.toLowerCase(), best.title.toLowerCase());
+        // if (distance > MAX_SCORE) {
+        //     debug('found', best.title, 'but had distance', distance);
+        //     throw new Error(`No good match for ${title}`);
+        // }
 
         debug('playing', best.title, 'from', best.appName);
         await p.play(best);
