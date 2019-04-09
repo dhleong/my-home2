@@ -48,7 +48,7 @@ const TITLES = [
 /**
  * Max acceptable score
  */
-const MAX_SCORE = 5;
+const MAX_SCORE = 0.2;
 
 /**
  * Routes media play/cast requests to the appropriate module
@@ -67,7 +67,7 @@ class PlayerModule {
 
         for (const id of Object.keys(TITLES)) {
             const title = TITLES[id];
-            const score = leven(given, title.name.toLowerCase());
+            const score = leven(given, title.name.toLowerCase()) / title.name.length;
             if (score < bestScore) {
                 bestScore = score;
                 bestTitle = title;
