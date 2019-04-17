@@ -4,7 +4,7 @@ const debug = require('debug')('home:http');
 function declareRoutes(module, s) {
     s.post('/action/play', async (req) => {
         if (!req.body.token) throw new Error('No token');
-        if (req.body.token !== this.token) throw new Error('Bad token');
+        if (req.body.token !== module.token) throw new Error('Bad token');
 
         if (req.body.title) {
             debug('Starting', req.body.title);
