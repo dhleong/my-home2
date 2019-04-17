@@ -3,9 +3,6 @@ const debug = require('debug')('home:http');
 
 function declareRoutes(module, s) {
     s.post('/action/play', async (req) => {
-        if (!req.body.token) throw new Error('No token');
-        if (req.body.token !== module.token) throw new Error('Bad token');
-
         if (req.body.title) {
             debug('Starting', req.body.title);
             await module._player.playTitle(req.body.title);
@@ -19,8 +16,6 @@ function declareRoutes(module, s) {
     });
 
     s.put('/devices/:id/state', async (req) => {
-        if (!req.body.token) throw new Error('No token');
-        if (req.body.token !== module.token) throw new Error('Bad token');
         if (!(req.params.id && req.body.state)) {
             throw new Error("Incomplete request");
         }
@@ -30,6 +25,22 @@ function declareRoutes(module, s) {
 
         return {success: true};
     });
+}
+
+class AuthError extends Error {
+    constructor(message) {
+        super(message);
+        this.statusCode = 401;
+    }
+}
+
+async function verifyToken(req) {
+    if (!req.body.token) throw new AuthError('No token');
+    if (req.body.token !== this.token) throw new AuthError('Bad token');
+}
+
+function declareMiddleware(module, s) {
+    s.addHook("preHandler", verifyToken.bind(module));
 }
 
 class HttpModule {
@@ -52,6 +63,7 @@ class HttpModule {
         });
         this._server = s;
 
+        declareMiddleware(this, s);
         declareRoutes(this, s);
 
         s.listen(this.port, '0.0.0.0', (err, address) => {
