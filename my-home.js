@@ -5,9 +5,13 @@ const createUuid = require('uuid/v5');
 const { loadConfig } = require('./modules/config');
 const TvModule = require('./modules/lgtv');
 const PsModule = require('./modules/ps4');
+
+const { DevicesModule } = require('./modules/devices');
 const { PlayerModule } = require('./modules/player');
 const { HttpModule } = require('./modules/http');
 const KeepAlive = require('./keepalive');
+
+const { safely, safe } = require('./util');
 
 const config = loadConfig();
 
@@ -15,19 +19,6 @@ const ps4 = new PsModule(config.ps4Creds);
 const player = new PlayerModule(config);
 const insomniac = new KeepAlive();
 let lgtv = null;  // lazy init, in case it's off
-
-const http = new HttpModule(config, player);
-
-/** wrap a promise so failures don't crash the app */
-const safely = (promise) => promise.catch(e => { console.warn(e); });
-
-/**
- * wrap an async function with a normal function that safely
- * executes the async function (see safely)
- */
-const safe = (asyncFn) => (...args) => {
-    safely(asyncFn(...args));
-};
 
 async function connectPs4IfActive() {
     const isAwake = await ps4.detect();
@@ -131,6 +122,9 @@ ps4.on('disconnected', function() {
     insomniac.allowSleep();
     lgtv = null;
 });
+
+const devicesModule = new DevicesModule(devices);
+const http = new HttpModule(config, player, devicesModule);
 
 http.start();
 
