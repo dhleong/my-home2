@@ -16,7 +16,11 @@ const TITLES = [
 
     // Youtube
 
-    ["Critical Role", "https://www.youtube.com/playlist?list=PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_"],
+    // NOTE: `skip` is a special parameter; we use it here to never try
+    // to resume the "Search for Grog" one-shot (for now) since I'm
+    // watching that on my own while my wife is catching up much
+    // earlier in the campaign.
+    ["Critical Role", "https://www.youtube.com/playlist?list=PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_&skip=hi5pEHs76TE"],
 
     // never resume the workout playlist!
     ["Workout", "https://www.youtube.com/playlist?list=PLw6X_oq5Z8kmISsoG_HYn_WxcOKJDLO9V", {resume: false}],
