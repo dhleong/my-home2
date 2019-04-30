@@ -9,6 +9,8 @@ const format = {
 
     ps4Creds: '',
 
+    shougunDb: '',
+
     // for uuidv5 of emulated devices
     uuidNamespace: '',
 };
