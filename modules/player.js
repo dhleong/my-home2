@@ -166,8 +166,7 @@ class PlayerModule {
 
         const s = await new ShougunBuilder()
             .trackInSqlite(this.config.shougunDb)
-            // .scanFolder("/Users/media/Movies")
-            .scanFolder("~/Movies")
+            .scanFolder(this.config.shougunMoviesDir)
             .matchByPhonetics()
             .playOnNamedChromecast(CHROMECAST_DEVICE)
             .build();

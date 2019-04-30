@@ -10,6 +10,7 @@ const format = {
     ps4Creds: '',
 
     shougunDb: '',
+    shougunMoviesDir: '',
 
     // for uuidv5 of emulated devices
     uuidNamespace: '',
