@@ -122,14 +122,19 @@ class PlayerModule {
 
     async _playBySearch(title) {
         const p = await this._getPlayer();
-        const best = await pickBestMatchForTitle(
-            p.queryByTitle(title),
-            title,
-        );
-        if (best) {
-            debug('playing', best.title, 'from', best.appName);
-            await p.play(best);
-            return;
+        let best;
+        try {
+            best = await pickBestMatchForTitle(
+                p.queryByTitle(title),
+                title,
+            );
+            if (best) {
+                debug('playing', best.title, 'from', best.appName);
+                await p.play(best);
+                return;
+            }
+        } catch (e) {
+            debug("Failed to play via babbling search", e);
         }
 
         const s = await this._getShougun();
