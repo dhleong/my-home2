@@ -18,6 +18,12 @@ if (
         }, {
             name: "DEBUG",
             value: 'home:*',
+        }, {
+            name: "FFPROBE_PATH",
+            value: "/usr/local/bin/ffprobe"
+        }, {
+            name: "FFMPEG_PATH",
+            value: "/usr/local/bin/ffmpeg"
         }],
     });
 
