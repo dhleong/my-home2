@@ -22,8 +22,11 @@ const TITLES = [
     // earlier in the campaign.
     ["Critical Role", "https://www.youtube.com/playlist?list=PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_&skip=hi5pEHs76TE"],
 
-    // never resume the workout playlist!
-    ["Workout", "https://www.youtube.com/playlist?list=PLw6X_oq5Z8kmISsoG_HYn_WxcOKJDLO9V", {resume: false}],
+    [
+        ["Workout", "A workout"], // aliases
+        "https://www.youtube.com/playlist?list=PLw6X_oq5Z8kmISsoG_HYn_WxcOKJDLO9V",
+        {resume: false}, // never resume the workout playlist!
+    ],
 
     // hbo
 
@@ -49,8 +52,15 @@ const TITLES = [
     ["Rookie", "https://www.hulu.com/series/1138ee62-b9d9-4561-8094-3f7cda4bbd22"],
 
 ].reduce((m, [name, url, opts]) => {
-    const id = nameToId(name);
-    m[id] = { name, url, opts };
+    const names = Array.isArray(name)
+        ? name
+        : [name];
+
+    for (const n of names) {
+        const id = nameToId(n);
+        m[id] = { n, url, opts };
+    }
+
     return m;
 }, {});
 
@@ -65,6 +75,7 @@ const MAX_SCORE = 0.2;
 class PlayerModule {
     constructor(config) {
         this.config = config;
+        console.log(TITLES);
     }
 
     async playTitle(title) {
