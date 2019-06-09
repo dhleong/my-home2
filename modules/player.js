@@ -29,7 +29,12 @@ const TITLES = [
 
     ["Game of Thrones", "https://play.hbogo.com/series/urn:hbo:series:GVU2cggagzYNJjhsJATwo"],
 
-    // hulu (NOTE: this urls are not quite right, but they should work)
+    //
+    // hulu (NOTE: some of these urls are not quite right, but they should work
+    //
+
+    // convenient alias for "Abby's" in the way Google hears it (for whatever reason)
+    ["A bees", "https://www.hulu.com/series/abbys-e41c66f8-cc43-4eff-855e-94b2fc81ea86"],
 
     ["Blindspot", "https://www.hulu.com/series/626ff449-811f-44ad-94cd-2d48c2063619"],
 
