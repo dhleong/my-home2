@@ -33,8 +33,8 @@ const TITLES = [
     // hulu (NOTE: some of these urls are not quite right, but they should work
     //
 
-    // convenient alias for "Abby's" in the way Google hears it (for whatever reason)
-    ["A bees", "https://www.hulu.com/series/abbys-e41c66f8-cc43-4eff-855e-94b2fc81ea86"],
+    // weird alias for "Abby's" in the way Google actually hears it (for whatever reason)
+    ["a bee ' s", "https://www.hulu.com/series/abbys-e41c66f8-cc43-4eff-855e-94b2fc81ea86"],
 
     ["Blindspot", "https://www.hulu.com/series/626ff449-811f-44ad-94cd-2d48c2063619"],
 
