@@ -58,7 +58,7 @@ const TITLES = [
 
     for (const n of names) {
         const id = nameToId(n);
-        m[id] = { n, url, opts };
+        m[id] = { name: n, url, opts };
     }
 
     return m;
