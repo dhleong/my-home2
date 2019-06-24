@@ -122,10 +122,14 @@ class PlayerModule {
 
     async _playBySearch(title) {
         const p = await this._getPlayer();
+        let queryError;
         let best;
         try {
             best = await pickBestMatchForTitle(
-                p.queryByTitle(title),
+                p.queryByTitle(title, (app, e) => {
+                    queryError = e;
+                    debug(`WARN: query(${app}) error:`, e);
+                }),
                 title,
             );
             if (best) {
@@ -149,6 +153,12 @@ class PlayerModule {
 
         // TODO it'd be nice if we could surface these
         // errors on the chromecast device somehow...
+        if (queryError) {
+            throw new Error(
+                `No result for ${title}; encountered babbling error:\n${queryError.stack}`,
+            );
+        }
+
         throw new Error(`Couldn't find anything for ${title}`);
     }
 
