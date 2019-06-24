@@ -4,6 +4,8 @@ const {
 } = require('babbling');
 const { pickBestMatchForTitle } = require('babbling/dist/cli/commands/find');
 
+const { ShougunBuilder } = require("shougun");
+
 const leven = require('leven');
 
 const CHROMECAST_DEVICE = 'Family Room TV';
@@ -120,26 +122,44 @@ class PlayerModule {
 
     async _playBySearch(title) {
         const p = await this._getPlayer();
-        const best = await pickBestMatchForTitle(
-            p.queryByTitle(title),
-            title,
-        );
-        if (!best) {
-            // TODO it'd be nice if we could surface these
-            // errors on the chromecast device somehow...
-            throw new Error(`Couldn't find anything for ${title}`);
+        let queryError;
+        let best;
+        try {
+            best = await pickBestMatchForTitle(
+                p.queryByTitle(title, (app, e) => {
+                    queryError = e;
+                    debug(`WARN: query(${app}) error:`, e);
+                }),
+                title,
+            );
+            if (best) {
+                debug('playing', best.title, 'from', best.appName);
+                await p.play(best);
+                return;
+            }
+        } catch (e) {
+            debug("Failed to play via babbling search", e);
         }
 
-        // NOTE: let's just trust babbling
-        // // double check
-        // const distance = leven(title.toLowerCase(), best.title.toLowerCase());
-        // if (distance > MAX_SCORE) {
-        //     debug('found', best.title, 'but had distance', distance);
-        //     throw new Error(`No good match for ${title}`);
-        // }
+        const s = await this._getShougun();
+        const bestLocal = await s.findMedia(title);
+        if (bestLocal) {
+            debug('playing', bestLocal.title, 'from Shougun:', bestLocal.discovery);
+            const launched = await s.play(bestLocal);
 
-        debug('playing', best.title, 'from', best.appName);
-        await p.play(best);
+            debug('  ->', launched);
+            return;
+        }
+
+        // TODO it'd be nice if we could surface these
+        // errors on the chromecast device somehow...
+        if (queryError) {
+            throw new Error(
+                `No result for ${title}; encountered babbling error:\n${queryError.stack}`,
+            );
+        }
+
+        throw new Error(`Couldn't find anything for ${title}`);
     }
 
     async _getPlayer() {
@@ -154,6 +174,19 @@ class PlayerModule {
             .build();
         this._player = p;
         return p;
+    }
+
+    async _getShougun() {
+        if (this._shougun) return this._shougun;
+
+        const s = await new ShougunBuilder()
+            .trackInSqlite(this.config.shougunDb)
+            .scanFolder(this.config.shougunMoviesDir)
+            .matchByPhonetics()
+            .playOnNamedChromecast(CHROMECAST_DEVICE)
+            .build();
+        this._shougun = s;
+        return s;
     }
 }
 
