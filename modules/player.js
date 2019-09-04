@@ -39,6 +39,14 @@ const TITLES = [
         {resume: false}, // never resume the workout playlist!
     ],
 
+    [
+        ["my watch later", "my watch later playlist"],
+        // NOTE: skip the first three; those are long-running series kept in
+        // my watch later for tracking, and not what I want to play when I
+        // request this playlist
+        "https://www.youtube.com/playlist?list=WL&index=3",
+    ],
+
     // hbo
 
     ["Game of Thrones", "https://play.hbogo.com/series/urn:hbo:series:GVU2cggagzYNJjhsJATwo"],
