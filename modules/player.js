@@ -1,10 +1,13 @@
 const debug = require('debug')('home:player');
+const fs = require('fs');
+
 const {
     ChromecastDevice, PlayerBuilder, YoutubeApp,
 } = require('babbling');
 const { pickBestMatchForTitle } = require('babbling/dist/cli/commands/find');
 
 const { ShougunBuilder } = require("shougun");
+const { CredentialsBuilder, WatchHistory, YoutubePlaylist } = require("youtubish");
 
 const leven = require('leven');
 
@@ -23,6 +26,12 @@ const TITLES = [
     // watching that on my own while my wife is catching up much
     // earlier in the campaign.
     ["Critical Role", "https://www.youtube.com/playlist?list=PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_&skip=hi5pEHs76TE"],
+
+    [
+        ["Campaign Two", "Campaign 2"],
+        null,  // no url, only fn:
+        { fn: findCampaignTwoEpisode},
+    ],
 
     [
         ["Workout", "A workout"], // aliases
@@ -117,6 +126,9 @@ class PlayerModule {
         const { url, opts } = titleObj;
         debug('playing', titleObj);
         const player = await this._getPlayer();
+        if (!url && opts.fn) {
+            return opts.fn(this.config, player);
+        }
         return player.playUrl(url, opts);
     }
 
@@ -188,6 +200,44 @@ class PlayerModule {
         this._shougun = s;
         return s;
     }
+}
+
+async function findCampaignTwoEpisode(config, player) {
+    const creds = youtubeCreds(config);
+
+    // for now, only consider older episodes, since I'm still watching
+    // the newer ones at work
+    const newestPossible = 70;
+
+    // critical role c2:
+    const playlistId = "PL1tiwbzkOjQxD0jjAE7PsWoaCrs0EkBH2";
+    const playlist = new YoutubePlaylist(creds, playlistId);
+    const history = new WatchHistory(creds);
+
+    const mostRecent = await playlist.filter(v => {
+        const m = v.title.match(/Episode (\d+)/);
+        if (!m) return;
+
+        const episodeNumber = parseInt(m[1]);
+        return episodeNumber < newestPossible;
+    }).findMostRecentlyPlayed(history, 1000);
+
+    if (!mostRecent) {
+        throw new Error("Couldn't find most recent CR episode");
+    }
+
+    debug("MOST RECENT=", mostRecent);
+    const url = `https://www.youtube.com/playlist?list=${playlistId}&v=${mostRecent.id}`;
+    debug("PLAYING", url);
+    return player.playUrl(url);
+}
+
+function youtubeCreds(config) {
+    const json = JSON.parse(fs.readFileSync(config.babblingConfigFile).toString());
+
+    return new CredentialsBuilder()
+        .cookies(json.YoutubeApp.cookies)
+        .build();
 }
 
 module.exports = {
