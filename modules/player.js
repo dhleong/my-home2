@@ -40,6 +40,11 @@ const TITLES = [
     ],
 
     [
+        "my queue",
+        "https://www.youtube.com/playlist?list=WL",
+    ],
+
+    [
         ["my watch later", "my watch later playlist"],
         // NOTE: skip the first three; those are long-running series kept in
         // my watch later for tracking, and not what I want to play when I
