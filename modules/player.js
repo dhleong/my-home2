@@ -41,7 +41,7 @@ const TITLES = [
 
     [
         ["my queue", "MyQ"], // google is... stupid
-        "https://www.youtube.com/playlist?list=WL",
+        "https://www.youtube.com/playlist?list=WL&index=0",
     ],
 
     [
