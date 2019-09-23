@@ -59,7 +59,10 @@ const TITLES = [
     // amazon
 
     // this is super ambiguous, sadly:
-    ["House", "https://www.amazon.com/gp/video/detail/B000W0H3DK"],
+    [
+        ["House", "Haus"],  // yes, Google hears "Haus" instead of "House"
+        "https://www.amazon.com/gp/video/detail/B000W0H3DK",
+    ],
 
     //
     // hulu (NOTE: some of these urls are not quite right, but they should work
