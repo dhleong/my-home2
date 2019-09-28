@@ -40,7 +40,9 @@ const TITLES = [
     ],
 
     [
-        ["my queue", "MyQ"], // google is... stupid
+        // also aliased to "my campaign" because that's what I keep thinking I set up,
+        // and this always goes there anyway
+        ["my campaign", "my queue", "MyQ"], // google is... stupid
         "https://www.youtube.com/playlist?list=WL&index=0",
     ],
 
