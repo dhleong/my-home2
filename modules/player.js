@@ -66,6 +66,9 @@ const TITLES = [
         "https://www.amazon.com/gp/video/detail/B000W0H3DK",
     ],
 
+    // the default finds something else right now...
+    ["Eureka", "https://www.amazon.com/gp/video/detail/B000U6BT40"],
+
     //
     // hulu (NOTE: some of these urls are not quite right, but they should work
     //
