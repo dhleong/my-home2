@@ -21,7 +21,7 @@
     "ps4-waker": "^1.8.1",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
-    "shougun": "^0.1.0",
+    "shougun": "^0.2.0",
     "uuid": "^3.3.2",
     "wemore": "^0.6.1",
     "youtubish": "^1.1.0"
