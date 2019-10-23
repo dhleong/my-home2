@@ -4,9 +4,6 @@ const fs = require('fs');
 const {
     ChromecastDevice, PlayerBuilder, YoutubeApp,
 } = require('babbling');
-const { pickBestMatchForTitle } = require('babbling/dist/cli/commands/find');
-
-const { PhoneticMatcher } = require('shougun/dist/match/phonetic');
 
 const { ShougunBuilder } = require("shougun");
 const { CredentialsBuilder, WatchHistory, YoutubePlaylist } = require("youtubish");
@@ -161,51 +158,12 @@ class PlayerModule {
     }
 
     async _playBySearch(title) {
-        const [p, s] = await Promise.all([
-            this._getPlayer(),
-            this._getShougun(),
-        ]);
-        let queryError;
-
-        // TODO we should perhaps move this logic into Shougun
-        const candidates = await Promise.all([
-            pickBestMatchForTitle(
-                p.queryByTitle(title, (app, e) => {
-                    queryError = e;
-                    debug(`WARN: query(${app}) error:`, e);
-                }),
-                title,
-            ),
-
-            s.findMedia(title),
-        ]);
-
-        const [bestStreaming, bestLocal] = candidates;
-        if (bestStreaming) {
-            debug('babbling best:', bestStreaming.title, 'from', bestStreaming.appName);
-        }
-        if (bestLocal) {
-            debug('local best:', bestLocal.title, 'from', bestLocal.discovery);
-        }
-
-        const matcher = new PhoneticMatcher();
-        const best = matcher.findBest(title, candidates, item =>
-            (item && item.title) || '');
-
-        if (best === bestStreaming) {
-            await playBabbling(p, bestStreaming);
+        const s = await this._getShougun();
+        const media = await s.findMedia(title);
+        if (media) {
+            debug("playing", media);
+            await s.play(media);
             return;
-        } else if (best === bestLocal) {
-            await playShougun(s, bestLocal);
-            return;
-        }
-
-        // TODO it'd be nice if we could surface these
-        // errors on the chromecast device somehow...
-        if (queryError) {
-            throw new Error(
-                `No result for ${title}; encountered babbling error:\n${queryError.stack}`,
-            );
         }
 
         throw new Error(`Couldn't find anything for ${title}`);
@@ -231,24 +189,15 @@ class PlayerModule {
         const s = await new ShougunBuilder()
             .trackInSqlite(this.config.shougunDb)
             .scanFolder(this.config.shougunMoviesDir)
+            .includeBabblingMedia({
+                configPath: this.config.babblingConfigFile,
+            })
             .matchByPhonetics()
             .playOnNamedChromecast(CHROMECAST_DEVICE)
             .build();
         this._shougun = s;
         return s;
     }
-}
-
-async function playBabbling(player, media) {
-    debug('playing', media.title, 'from', media.appName);
-    await player.play(media);
-}
-
-async function playShougun(shougun, media) {
-    debug('playing', media.title, 'from Shougun:', media.discovery);
-    const launched = await shougun.play(media);
-
-    debug('  ->', launched);
 }
 
 async function findCampaignTwoEpisode(config, player) {
