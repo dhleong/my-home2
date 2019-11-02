@@ -8,7 +8,7 @@ function declareRoutes(module, s) {
         // think it failed and trying again later. This would manifest in the
         // IFTTT logs as an "Applet failed" event followed by an "Applet run"
         // event that both have the same CreatedAt and TextField properties
-        handlePlayRequestAsync(req).finally(() =>
+        handlePlayRequestAsync(module, req).finally(() =>
             debug("finished handling playback request"));
 
         return {success: true};
@@ -26,7 +26,7 @@ function declareRoutes(module, s) {
     });
 }
 
-async function handlePlayRequestAsync(req) {
+async function handlePlayRequestAsync(module, req) {
     try {
         if (req.body.title) {
             debug('Starting', req.body.title);
