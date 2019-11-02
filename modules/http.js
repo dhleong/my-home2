@@ -3,14 +3,13 @@ const debug = require('debug')('home:http');
 
 function declareRoutes(module, s) {
     s.post('/action/play', async (req) => {
-        if (req.body.title) {
-            debug('Starting', req.body.title);
-            await module._player.playTitle(req.body.title);
-        } else if (req.body['title-id']) {
-            const id = req.body['title-id'];
-            debug('Starting by id', id);
-            await module._player.playTitleId(id);
-        }
+        // NOTE: we handle the request asyncronously and immediately return
+        // "success" to avoid a timeout (or internal error) causing IFTTT to
+        // think it failed and trying again later. This would manifest in the
+        // IFTTT logs as an "Applet failed" event followed by an "Applet run"
+        // event that both have the same CreatedAt and TextField properties
+        handlePlayRequestAsync(req).finally(() =>
+            debug("finished handling playback request"));
 
         return {success: true};
     });
@@ -25,6 +24,21 @@ function declareRoutes(module, s) {
 
         return {success: true};
     });
+}
+
+async function handlePlayRequestAsync(req) {
+    try {
+        if (req.body.title) {
+            debug('Starting', req.body.title);
+            await module._player.playTitle(req.body.title);
+        } else if (req.body['title-id']) {
+            const id = req.body['title-id'];
+            debug('Starting by id', id);
+            await module._player.playTitleId(id);
+        }
+    } catch (e) {
+        debug('ERROR handling', req.body, ':\n', e.stack);
+    }
 }
 
 class AuthError extends Error {
