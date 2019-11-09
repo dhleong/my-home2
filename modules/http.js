@@ -15,7 +15,9 @@ function declareRoutes(module, s) {
     });
 
     s.post('/action/recommend', async () => {
-        await module._player.showRecommendations();
+        module._player.showRecommendations().catch(e =>
+            debug("failed to show recommendations", e),
+        );
 
         return {success: true};
     });
