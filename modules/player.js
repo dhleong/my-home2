@@ -147,6 +147,11 @@ class PlayerModule {
         return this._play(title);
     }
 
+    async showRecommendations() {
+        const s = await this._getShougun();
+        return s.showRecommendations();
+    }
+
     async _play(titleObj) {
         const { url, opts } = titleObj;
         debug('playing', titleObj);

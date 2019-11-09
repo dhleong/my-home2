@@ -14,6 +14,12 @@ function declareRoutes(module, s) {
         return {success: true};
     });
 
+    s.post('/action/recommend', async () => {
+        await module._player.showRecommendations();
+
+        return {success: true};
+    });
+
     s.put('/devices/:id/state', async (req) => {
         if (!(req.params.id && req.body.state)) {
             throw new Error("Incomplete request");
