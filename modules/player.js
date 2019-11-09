@@ -198,6 +198,7 @@ class PlayerModule {
                 configPath: this.config.babblingConfigFile,
             })
             .matchByPhonetics()
+            .enableRemote()
             .playOnNamedChromecast(CHROMECAST_DEVICE)
             .build();
         this._shougun = s;
