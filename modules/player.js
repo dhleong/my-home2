@@ -112,6 +112,11 @@ class PlayerModule {
     constructor(config) {
         this.config = config;
         console.log(TITLES);
+
+        // go ahead and eagerly init shougun so the remote works
+        this._getShougun().then(() => {
+            debug('shougun ready');
+        });
     }
 
     async playTitle(title) {
