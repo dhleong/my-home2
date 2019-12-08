@@ -5,7 +5,7 @@ const {
     ChromecastDevice, PlayerBuilder, YoutubeApp,
 } = require('babbling');
 
-const { ShougunBuilder } = require("shougun");
+const { BorrowMode, ShougunBuilder } = require("shougun");
 const { CredentialsBuilder, WatchHistory, YoutubePlaylist } = require("youtubish");
 
 const leven = require('leven');
@@ -203,7 +203,9 @@ class PlayerModule {
                 configPath: this.config.babblingConfigFile,
             })
             .matchByPhonetics()
-            .enableRemote()
+            .enableRemote({
+                borrowing: BorrowMode.LENDER,
+            })
             .playOnNamedChromecast(CHROMECAST_DEVICE)
             .build();
         this._shougun = s;
