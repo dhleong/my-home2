@@ -158,13 +158,21 @@ class PlayerModule {
     }
 
     async _play(titleObj) {
-        const { url, opts } = titleObj;
+        const { name, url, opts } = titleObj;
         debug('playing', titleObj);
         const player = await this._getPlayer();
         if (!url && opts.fn) {
             return opts.fn(this.config, player);
         }
-        return player.playUrl(url, opts);
+        try {
+            await player.playUrl(url, opts);
+        } catch (e) {
+            const s = await this._getShougun();
+            s.context.player.showError(e,
+                `Unable to play ${name}`,
+            );
+            throw e;
+        }
     }
 
     async _playBySearch(title) {
