@@ -5,7 +5,7 @@ const {
     ChromecastDevice, PlayerBuilder, YoutubeApp,
 } = require('babbling');
 
-const { BorrowMode, ShougunBuilder } = require("shougun");
+const { ShougunBuilder } = require("shougun");
 const { CredentialsBuilder, WatchHistory, YoutubePlaylist } = require("youtubish");
 
 const leven = require('leven');
@@ -196,17 +196,16 @@ class PlayerModule {
     async _getShougun() {
         if (this._shougun) return this._shougun;
 
-        const s = await new ShougunBuilder()
-            .trackInSqlite(this.config.shougunDb)
-            .scanFolder(this.config.shougunMoviesDir)
+        const s = await ShougunBuilder.create()
+            .playOnNamedChromecast(CHROMECAST_DEVICE)
             .includeBabblingMedia({
                 configPath: this.config.babblingConfigFile,
             })
+            .scanFolder(this.config.shougunMoviesDir)
+            .trackInSqlite(this.config.shougunDb)
             .matchByPhonetics()
-            .enableRemote({
-                borrowing: BorrowMode.LENDER,
-            })
-            .playOnNamedChromecast(CHROMECAST_DEVICE)
+            .enableRemote()
+            .enableLenderMode()
             .build();
         this._shougun = s;
         return s;
