@@ -161,10 +161,11 @@ class PlayerModule {
         const { name, url, opts } = titleObj;
         debug('playing', titleObj);
         const player = await this._getPlayer();
-        if (!url && opts.fn) {
-            return opts.fn(this.config, player);
-        }
         try {
+            if (!url && opts.fn) {
+                return await opts.fn(this.config, player);
+            }
+
             await player.playUrl(url, opts);
         } catch (e) {
             const s = await this._getShougun();
