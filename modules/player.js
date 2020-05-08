@@ -226,7 +226,7 @@ async function findCampaignTwoEpisode(config, player) {
 
     // for now, only consider older episodes, since I'm still watching
     // the newer ones at work
-    const newestPossible = 70;
+    const newestPossible = 90;
 
     // critical role c2:
     const playlistId = "PL1tiwbzkOjQxD0jjAE7PsWoaCrs0EkBH2";
