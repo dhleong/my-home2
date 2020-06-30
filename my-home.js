@@ -1,6 +1,6 @@
 const mdns = require('mdns');
 const wemore = require('wemore');
-const createUuid = require('uuid/v5');
+const { v5: createUuid } = require('uuid');
 
 const { loadConfig } = require('./modules/config');
 const TvModule = require('./modules/lgtv');
