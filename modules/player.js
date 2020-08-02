@@ -224,22 +224,12 @@ class PlayerModule {
 async function findCampaignTwoEpisode(config, player) {
     const creds = youtubeCreds(config);
 
-    // for now, only consider older episodes, since I'm still watching
-    // the newer ones at work
-    const newestPossible = 90;
-
     // critical role c2:
     const playlistId = "PL1tiwbzkOjQxD0jjAE7PsWoaCrs0EkBH2";
     const playlist = new YoutubePlaylist(creds, playlistId);
     const history = new WatchHistory(creds);
 
-    const mostRecent = await playlist.filter(v => {
-        const m = v.title.match(/Episode (\d+)/);
-        if (!m) return;
-
-        const episodeNumber = parseInt(m[1]);
-        return episodeNumber < newestPossible;
-    }).findMostRecentlyPlayed(history, 1000);
+    const mostRecent = await playlist.findMostRecentlyPlayed(history, 1000);
 
     if (!mostRecent) {
         throw new Error("Couldn't find most recent CR episode");
