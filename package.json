@@ -10,7 +10,7 @@
   "author": "Daniel Leong",
   "license": "ISC",
   "dependencies": {
-    "babbling": "^1.23.5",
+    "babbling": "^1.23.6",
     "debug": "^4.1.1",
     "fastify": "^2.15.3",
     "fs-extra": "^9.0.1",
@@ -18,10 +18,10 @@
     "lg-control": "file:../lg-control",
     "mdns": "^2.5.1",
     "node-mac": "^1.0.1",
-    "ps4-waker": "^1.10.0",
+    "ps4-waker": "^1.10.1",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9",
-    "shougun": "^1.5.2",
+    "shougun": "^1.5.3",
     "uuid": "^8.3.0",
     "wemore": "^0.6.2",
     "youtubish": "^1.2.2"
