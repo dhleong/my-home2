@@ -7,6 +7,9 @@ const {
 
 const { ShougunBuilder } = require("shougun");
 const { CredentialsBuilder, WatchHistory, YoutubePlaylist } = require("youtubish");
+const {
+    OauthCredentialsManager,
+} = require("youtubish/dist/creds");
 
 const leven = require('leven');
 
@@ -244,9 +247,9 @@ async function findCampaignTwoEpisode(config, player) {
 function youtubeCreds(config) {
     const json = JSON.parse(fs.readFileSync(config.babblingConfigFile).toString());
 
-    return new CredentialsBuilder()
-        .cookies(json.YoutubeApp.cookies)
-        .build();
+    return new OauthCredentialsManager(
+        json.YoutubeApp,
+    );
 }
 
 module.exports = {
