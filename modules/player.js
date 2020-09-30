@@ -247,9 +247,10 @@ async function findCampaignTwoEpisode(config, player) {
 function youtubeCreds(config) {
     const json = JSON.parse(fs.readFileSync(config.babblingConfigFile).toString());
 
-    return new OauthCredentialsManager(
-        json.YoutubeApp,
-    );
+    return new OauthCredentialsManager({
+        refreshToken: json.YoutubeApp.refreshToken,
+        access: JSON.parse(config.YoutubeApp.access),
+    });
 }
 
 module.exports = {
