@@ -249,7 +249,7 @@ function youtubeCreds(config) {
 
     return new OauthCredentialsManager({
         refreshToken: json.YoutubeApp.refreshToken,
-        access: JSON.parse(config.YoutubeApp.access),
+        access: JSON.parse(json.YoutubeApp.access),
     });
 }
 
