@@ -31,8 +31,9 @@ const TITLES = [
 
     [
         ["Campaign Two", "Campaign 2"],
-        null,  // no url, only fn:
-        { fn: findCampaignTwoEpisode},
+        "https://www.youtube.com/playlist?list=PL1tiwbzkOjQxD0jjAE7PsWoaCrs0EkBH2",
+        // null,  // no url, only fn:
+        // { fn: findCampaignTwoEpisode},
     ],
 
     [
