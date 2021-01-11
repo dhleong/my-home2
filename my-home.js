@@ -1,4 +1,4 @@
-const mdns = require('mdns');
+const mdns = require('mdns-js');
 const wemore = require('wemore');
 const { v5: createUuid } = require('uuid');
 
@@ -87,7 +87,9 @@ const devices = {
 Object.keys(devices).forEach(function(key) {
     devices[key].on('listening', function() {
         console.log("Advertising", this.friendlyName, "on", this.port);
-        mdns.createAdvertisement(mdns.tcp('http'), this.port).start();
+        mdns.createAdvertisement(mdns.tcp('http'), this.port, {
+            name: key,
+        }).start();
     });
 });
 
