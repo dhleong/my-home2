@@ -172,6 +172,7 @@ class PlayerModule {
 
             await player.playUrl(url, opts);
         } catch (e) {
+            debug("error playing", titleObj, ":", e);
             const s = await this._getShougun();
             s.context.player.showError(e,
                 `Unable to play ${name}`,
@@ -198,7 +199,6 @@ class PlayerModule {
         const p = (await PlayerBuilder.autoInflate(this.config.babblingConfigFile))
             .withApp(YoutubeApp, {
                 deviceName: "Home",
-                playlistsCache: {},
             })
             .addDevice(new ChromecastDevice(CHROMECAST_DEVICE))
             .build();
@@ -226,6 +226,7 @@ class PlayerModule {
 }
 
 async function findCampaignTwoEpisode(config, player) {
+    debug("try to locate most recent C2 episode...", config);
     const creds = youtubeCreds(config);
 
     // critical role c2:
