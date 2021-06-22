@@ -17,7 +17,7 @@ if (
             value: __dirname,
         }, {
             name: "DEBUG",
-            value: 'home:*',
+            value: 'home:*,shougun:*',
         }, {
             name: "FFPROBE_PATH",
             value: "/usr/local/bin/ffprobe"
