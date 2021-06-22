@@ -41,8 +41,15 @@ if (
     switch (command) {
     case "restart":
         console.log("Stopping service, and ...");
-        svc.stop();
-        svc.uninstall();
+        try {
+            svc.stop();
+            svc.uninstall();
+        } catch (e) {
+            if (e.code !== "ENOENT") {
+                // NOTE: Ignore "no such file" for the log file
+                throw e;
+            }
+        }
 
         setTimeout(() => {
             console.log("... restarting...");
