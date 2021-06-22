@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 
+const fs = require('fs');
+
 if (
-    process.platform == 'darwin'
-    && 'now' != process.argv[2]
+    process.platform === 'darwin'
+    && 'now' !== process.argv[2]
 ) {
 
     var Service = require('node-mac').Service;
@@ -40,16 +42,11 @@ if (
 
     switch (command) {
     case "restart":
+        fs.mkdirSync('/Library/Logs/MyHome', { recursive: true });
+
         console.log("Stopping service, and ...");
-        try {
-            svc.stop();
-            svc.uninstall();
-        } catch (e) {
-            if (e.code !== "ENOENT") {
-                // NOTE: Ignore "no such file" for the log file
-                throw e;
-            }
-        }
+        svc.stop();
+        svc.uninstall();
 
         setTimeout(() => {
             console.log("... restarting...");
