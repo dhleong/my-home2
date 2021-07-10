@@ -2,14 +2,21 @@
 
 const fs = require('fs');
 
-if (
-    process.platform === 'darwin'
-    && 'now' !== process.argv[2]
-) {
+function onServiceAsPromise(svc, method) {
+    return new Promise((resolve, reject) => {
+        svc.once("error", reject);
+        svc.once(method, () => {
+            svc.removeListener("error", reject);
+            resolve();
+        });
+        svc[method]();
+    });
+}
 
-    var Service = require('node-mac').Service;
+async function startServiceMacos() {
+    const Service = require('node-mac').Service;
 
-    var svc = new Service({
+    const svc = new Service({
         name: 'MyHome',
         description: 'My Smarthome server',
         script: require('path').join(__dirname, 'my-home.js'),
@@ -31,6 +38,7 @@ if (
 
     svc.on('install', function() {
         console.log("MyHome starting");
+        fs.mkdirSync('/Library/Logs/MyHome', { recursive: true });
         svc.start();
     }).on('uninstall', function() {
         console.log("MyHome uninstalled");
@@ -40,29 +48,37 @@ if (
 
     var command = process.argv[2] || 'restart';
 
+    fs.mkdirSync('/Library/Logs/MyHome', { recursive: true });
+
     switch (command) {
     case "restart":
-        fs.mkdirSync('/Library/Logs/MyHome', { recursive: true });
-
         console.log("Stopping service, and ...");
-        svc.stop();
-        svc.uninstall();
+        await onServiceAsPromise(svc, "stop");
+        await onServiceAsPromise(svc, "uninstall");
 
-        setTimeout(() => {
-            console.log("... restarting...");
-            svc.install();
-        }, 250);
+        console.log("... restarting...");
+        fs.mkdirSync('/Library/Logs/MyHome', { recursive: true });
+        await onServiceAsPromise(svc, "install");
         break;
 
     case "start":
-        svc.install();
+        await onServiceAsPromise(svc, "install");
         break;
 
     case "stop":
         console.log("Stopping service...");
-        svc.uninstall();
+        await onServiceAsPromise(svc, "uninstall");
         break;
     }
+}
+
+if (
+    process.platform === 'darwin'
+    && 'now' !== process.argv[2]
+) {
+    startServiceMacos()
+        .then(() => console.log("Done!"))
+        .catch(e => { throw e; });
 } else {
     require("./my-home");
 }
