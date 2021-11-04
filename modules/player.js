@@ -37,6 +37,11 @@ const TITLES = [
     ],
 
     [
+        ["Campaign Three", "Campaign 3"],
+        "https://www.youtube.com/playlist?list=PL1tiwbzkOjQydg3QOkBLG9OYqWJ0dwlxF"
+    ],
+
+    [
         ["Workout", "A workout"], // aliases
         "https://www.youtube.com/playlist?list=PLw6X_oq5Z8kmISsoG_HYn_WxcOKJDLO9V",
         {resume: false}, // never resume the workout playlist!
