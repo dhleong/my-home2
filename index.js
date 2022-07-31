@@ -48,16 +48,21 @@ async function startServiceMacos() {
 
     var command = process.argv[2] || 'restart';
 
-    fs.mkdirSync('/Library/Logs/MyHome', { recursive: true });
+    const LOG_DIR = '/Library/Logs/MyHome';
+    fs.mkdirSync(LOG_DIR, { recursive: true });
 
     switch (command) {
     case "restart":
         console.log("Stopping service, and ...");
         await onServiceAsPromise(svc, "stop");
+
+        // Delete the log dir so node-mac doesn't try to do that itself (and potentially fail)
+        console.log("... uninstalling, and ...");
+        fs.rmdirSync(LOG_DIR, { recursive: true, force: true });
         await onServiceAsPromise(svc, "uninstall");
 
         console.log("... restarting...");
-        fs.mkdirSync('/Library/Logs/MyHome', { recursive: true });
+        fs.mkdirSync(LOG_DIR, { recursive: true });
         await onServiceAsPromise(svc, "install");
         break;
 
