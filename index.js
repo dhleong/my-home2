@@ -78,8 +78,14 @@ async function startServiceMacos() {
 
     switch (command) {
     case "restart":
-        // NOTE: uninstall also calls stop()
-        console.log("Uninstalling service, and ...");
+        console.log("Stopping service, and ...");
+        // NOTE: node-mac will throw an error when we try to stop() if the log file
+        // doesn't exist, so we do it ourselves...
+        await onServiceAsPromise(svc, "stop");
+
+        // Delete the log dir so node-mac doesn't try to do that itself (and potentially fail)
+        console.log("... uninstalling, and ...");
+        fs.rmdirSync(LOG_DIR, { recursive: true, force: true });
         await onServiceAsPromise(svc, "uninstall");
 
         console.log("... restarting...");
