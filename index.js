@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+const execFile = require('util').promisify(require('child_process').execFile);
 
 function onServiceAsPromise(svc, method) {
     return new Promise((resolve, reject) => {
@@ -54,7 +55,10 @@ async function startServiceMacos() {
     switch (command) {
     case "restart":
         console.log("Stopping service, and ...");
-        await onServiceAsPromise(svc, "stop");
+        // NOTE: node-mac will throw an error when we try to stop() if the log file
+        // doesn't exist, so we do it ourselves...
+        // await onServiceAsPromise(svc, "stop");
+        await execFile('launchctl', ['unload', svc.plist]);
 
         // Delete the log dir so node-mac doesn't try to do that itself (and potentially fail)
         console.log("... uninstalling, and ...");
